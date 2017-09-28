@@ -1,0 +1,11 @@
+image: samueldebruyn/debian-git
+
+pipelines:
+  default:
+    - step:
+        script:
+          - apt-get update
+          - apt-get -qq install git-ftp
+          - git ftp push --syncroot $GIT_DEST --user $FED_FTP_USER --passwd $FED_FTP_PASS ftp://$FED_FTP_IP/$FTP_DEST
+
+# Be sure to change init on line 9 to push and remove --all after first deployment.
