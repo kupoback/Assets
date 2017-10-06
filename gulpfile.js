@@ -36,7 +36,9 @@ gulp.task('css', function() {
 });
 
 gulp.task('vendor-js', function() {
-  return gulp.src('dev/js/vendor/*.js')
+  return gulp.src(['dev/js/vendor/*.js',
+                   // 'dev/js/bootstrap-3/*.js',
+                   'dev/js/bootstrap-4/*.js'] )
   .pipe(sourcemaps.init())
   .pipe(concat('application-vendor.js'))
   .pipe(uglify())
@@ -47,7 +49,9 @@ gulp.task('vendor-js', function() {
 });
 
 gulp.task('js', function() {
-  return gulp.src(['dev/js/*.js',  'dev/js/**/*.js', '!dev/js/vendor/*.js'])
+  return gulp.src(['dev/js/*.js',
+                   'dev/js/**/*.js',
+                   '!dev/js/vendor/*.js'])
   .pipe(sourcemaps.init())
   .on('error', handleError)
   .pipe(concat('application.js'))
@@ -57,7 +61,8 @@ gulp.task('js', function() {
 });
 
 gulp.task('media-files', function() {
-  return gulp.src(['dev/media/**/*', '!dev/media/**/*.{jpg,jpeg,png,gif,ico,svg}'])
+  return gulp.src(['dev/media/**/*',
+                   '!dev/media/**/*.{jpg,jpeg,png,gif,ico,svg}'])
   .pipe(flatten())
   .pipe(newer('public/media'))
   .on('error', handleError)
