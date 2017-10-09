@@ -1,3 +1,4 @@
+.idea/*
 *.ico
 *~
 .DS_Store
@@ -21,20 +22,7 @@ wp-content/plugins/what-the-file
 app/cache
 
 # wordpress specific
-wp-activate.php
-wp-blog-header.php
-wp-comments-post.php
-wp-config-sample.php
 wp-config.php
-wp-cron.php
-wp-links-opml.php
-wp-load.php
-wp-login.php
-wp-mail.php
-wp-settings.php
-wp-signup.php
-wp-trackback.php
-xmlrpc.php
 wp-admin/*
 wp-includes/*
 wp-content/uploads/
@@ -98,6 +86,7 @@ wp-includes/
 node_modules
 *.png
 *.mo
+.idea
 *.jpg
 *.po
 *.pot
