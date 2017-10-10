@@ -17,8 +17,10 @@ filter    = require('gulp-filter'),
 gutil = require('gulp-util'),
 path = require('path'),
 
-proj_dir = 'makattak',
-theme_dir = 'mak';
+// Give a project path
+proj_dir = '',
+// Give a theme path if WP
+theme_dir = '';
 
 // Default CSS
 gulp.task('css', function() {
@@ -95,22 +97,21 @@ gulp.task('html',  function() {
 	  .pipe(gulp.dest('public/'));
 });
 
-gulp.task('open', function(){
-  setTimeout(function(){
-    gulp.src('')
-    .pipe(open({ uri: 'http://cantigny'}));
-  }, 5000);
-});
+// gulp.task('open', function(){
+//   setTimeout(function(){
+//     gulp.src('')
+//     .pipe(open({ uri: 'http://cantigny'}));
+//   }, 5000);
+// });
 
 gulp.task('connect', function() {
   gulp.watch('dev/sass/**/**/*.scss', ['css']);
   gulp.watch('dev/js/vendor/*.js', ['vendor-js']);
-  gulp.watch('public/css/*.css', ['min-css']);
   gulp.watch(['dev/js/**/*.js', '!dev/js/vendor/*.js'], ['js']);
 
-	livereload.listen();
-
-	gulp.watch(['dev/js/**/*.js', 'public/css/*.css']).on('change', livereload.changed);
+	// livereload.listen();
+	//
+	// gulp.watch(['dev/js/**/*.js', 'public/css/*.css']).on('change', livereload.changed);
 
 });
 
@@ -120,4 +121,4 @@ function handleError(err) {
   this.emit('end');
 }
 
-gulp.task('default', [ 'css', 'min-css', 'vendor-js', 'js', 'connect' ]);
+gulp.task('default', [ 'css', 'vendor-js', 'js', 'connect' ]);
