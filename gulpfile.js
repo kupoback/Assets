@@ -22,6 +22,25 @@ proj_dir = '',
 // Give a theme path if WP
 theme_dir = '';
 
+//Vendor CSS
+gulp.task('vendor-css', function() {
+	return gulp.src('dev/sass/application-vendor.scss')
+		.pipe(flatten())
+		.pipe(newer('dev/sass/vendor/*'))
+		.pipe(sourcemaps.init())
+		.pipe(globbing({extensions: '.scss'}))
+		.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+		.pipe(autoprefixer({cascade: false}))
+		.pipe(sourcemaps.write())
+		.on('error', handleError)
+		.pipe(gulp.dest('public/css'))
+		// Uncomment for Non-WP
+		// .pipe(gulp.dest('../' + proj_dir + '/css'))
+		// Uncomment for WP
+		// .pipe(gulp.dest( proj_dir + theme_dir + '/assets/css'))
+		;
+});
+
 // Default CSS
 gulp.task('css', function() {
   return gulp.src('dev/sass/application.scss')
@@ -42,9 +61,7 @@ gulp.task('css', function() {
 });
 
 gulp.task('vendor-js', function() {
-  return gulp.src(['dev/js/vendor/*.js',
-                   // 'dev/js/bootstrap-3/*.js',
-                   'dev/js/bootstrap-4/*.js'] )
+  return gulp.src(['dev/js/vendor/*.js'])
 	  .pipe(sourcemaps.init())
 	  .pipe(concat('application-vendor.js'))
 	  .pipe(uglify())
@@ -105,6 +122,7 @@ gulp.task('html',  function() {
 // });
 
 gulp.task('connect', function() {
+	gulp.watch('dev/sass/vendor/*.scss', ['vendor-css']);
   gulp.watch('dev/sass/**/**/*.scss', ['css']);
   gulp.watch('dev/js/vendor/*.js', ['vendor-js']);
   gulp.watch(['dev/js/**/*.js', '!dev/js/vendor/*.js'], ['js']);
@@ -121,4 +139,4 @@ function handleError(err) {
   this.emit('end');
 }
 
-gulp.task('default', [ 'css', 'vendor-js', 'js', 'connect' ]);
+gulp.task('default', [ 'vendor-css', 'css', 'vendor-js', 'js', 'connect' ]);

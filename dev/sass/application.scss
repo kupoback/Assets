@@ -2,9 +2,11 @@
 
 // Comment out the Boostrap version you don't need. Only run one.
 // Make sure to also comment out it's appropriate javascript file
+@import "required/_reset";
+@import "required/_normalize";
+@import "required/_wp";
+@import "required/_animate";
 @import "bootstrap-4/*";
-//@import "bootstrap-3/*";
-@import "vendor/*";
 @import "settings/**/*";
 @import "components/*";
 @import "objects/*";
