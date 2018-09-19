@@ -1,0 +1,8 @@
+@import "../settings/_settings.scss";
+@import "../settings/_mixins.scss";
+
+/*  DataTable
+======================================*/
+.dataTables_wrapper {
+	.table-responsive { border-collapse: collapse !important; }
+}
