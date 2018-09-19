@@ -18,7 +18,7 @@
 	},
 	"devDependencies": {
 		"browser-sync": "^2.24.7",
-		"datatables": "^1.10.18",
+		"datatables.net-dt" : "^1.10.19",
 		"del": "^3.0.0",
 		"fancybox": "^3.0.1",
 		"gulp": "^4.0.0",

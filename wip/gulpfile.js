@@ -24,22 +24,29 @@ gulp.task('clean', function() {
 // Copy third party libraries from node_modules into /vendor
 gulp.task('vendor:js', function() {
 	return gulp.src([
-		// IF YOU WANT TO INCLUDE ALL THE BOOTSTRAP JAVASCRIPT ITEMS
-		// AS YOU FEEL YOU'LL BE USING THEM ALL, UNCOMMENT THIS
-		// AND COMMENT OUT THE REMAINDER OF FILE PATHS
+
+		/* IF YOU WANT TO INCLUDE ALL THE BOOTSTRAP JAVASCRIPT ITEMS
+		 AS YOU FEEL YOU'LL BE USING THEM ALL, UNCOMMENT THIS
+		 AND COMMENT OUT THE REMAINDER OF FILE PATHS
+	  */
 
 		// ## START ALL BOOTSTRAP JAVASCRIPT ##
 		// './node_modules/bootstrap/dist/js/bootstrap.bundle.*',
 		// ## END ALL BOOTSTRAP JAVASCRIPT
 
-		// ## START BOOTSTRAP INDIVIDUAL JAVASCRIPT ITEMS ##
-		// For ANY Bootstrap 4 javascript file, we need Popper first
+		/*
+		## START BOOTSTRAP INDIVIDUAL JAVASCRIPT ITEMS ##
+		For ANY Bootstrap 4 javascript file, we need Popper first
+		 */
 		'./node_modules/popper.js/dist/umd/popper.min.*',
+
 		// Next we need Bootstraps util.js and index.js file
 		'./node_modules/bootstrap/src/js/index.*',
 		'./node_modules/bootstrap/src/js/util.*',
+
 		// Here we'll define which Bootstrap Javascript Elements we need for the project.
 		// Comment out any files you will not need
+
 		// ALERT
 		'./node_modules/bootstrap/src/js/alert.*',
 		// BUTTON
@@ -64,6 +71,14 @@ gulp.task('vendor:js', function() {
 		// ## END BOOTSTRAP ##
 
 		// ## START OTHER PLUGINS ##
+
+		/**
+		 * Plugin Name: DataTables
+		 * Author URI : https://datatables.net
+		 */
+
+
+
 
 
 	])
