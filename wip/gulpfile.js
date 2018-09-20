@@ -1,9 +1,9 @@
 /**
  * 1. Required Node Modules
- * 2. Path Variables
+ * 2. Path Variables - DO NOT TOUCH
+ * 3. Array Variables for Gulp
  *
  */
-
 
 "use strict";
 
@@ -11,14 +11,21 @@
  1. Required Node Modules
  ======================================*/
 
+// DEVELOPER ATTENTION
+// SET THIS NEXT VARIABLE TO BE EITHER TRUE OR FALSE
+// TO DETERMINE WHICH COMPILATION OF BOOTSTRAP WE'RE
+// GOING TO USE ON THIS SITE
+const bs4_full = false;
+
+//region Required
 const del          = require( "del" );
 const browserSync  = require( "browser-sync" ).create();
 const url          = require( "url" );
 const userHome     = require( "user-home" );
-const popper       = require( "popper.js" );
-const bootstrap4   = require( "bootstrap" );
 const runSequence  = require( "run-sequence" );
+const glob         = require( "glob" );
 const gulp         = require( "gulp" );
+const babelCore    = require( "@babel/core" );
 const autoprefixer = require( "gulp-autoprefixer" );
 const cleanCSS     = require( "gulp-clean-css" );
 const concat       = require( "gulp-concat" );
@@ -31,151 +38,192 @@ const uglify       = require( "gulp-uglify" );
 const jpegCompress = require( "imagemin-jpeg-recompress" );
 const merge        = require( "merge-stream" );
 const dataTables   = require( "datatables.net-dt" );
-const fancyBox     = require( "@fancyapps/fancybox" );
-const owlCarousel  = require( "owl-carousel-2" );
+//endregion
 
 /*======================================
  2. Path Variables
  ======================================*/
 
-/**
- * We'll be setting up our node paths of plugins
- * we'll be using, plus our assets
- *
- * @type {string}
- * @private
- */
-      // Node
-const _npm_dir          = "./node_modules";
-const _dev_dir          = "./dev/";
-const _bs_src_js        = _npm_dir + "/bootstrap/src/js/dist";
-const _bs_src_css       = _npm_dir + "/bootstrap/src/css/dist";
-const _bs_dist_all_js   = _npm_dir + "/bootstrap/dist/js/bootstrap.bundle.min.*";
-const _bs_dist_core_js  = _npm_dir + "/bootstrap/dist/js/bootstrap.min.*";
-const _bs_dist_all_css  = _npm_dir + "/bootstrap/dist/css/*.min.*";
-const _bs_dist_core_css = _npm_dir + "/bootstrap/dist/css/*.min.*";
-const _popper           = _npm_dir + "/popper.js/dist/umd/popper.*";
+//region DO NOT TOUCH
+// Folder Locations
+const _dev_dir = "./dev";
+const _npm_dir = "./node_modules";
+//endregion
 
-// Alternate Plugins
-const _dataTables_js  = _npm_dir + "/datatables.net-dt/js/dataTables.dataTables.min.js";
-const _dataTables_css = _npm_dir + "/datatables.net-dt/css/jquery.dataTables.min.css";
-const _dataTables_img = _npm_dir + "/datatables.net-dt/images/";
-const _fancybox_js    = _npm_dir + "/@fancyapps/jquery.fancybox.min.js";
-const _fancybox_css   = _npm_dir + "/@fancyapps/jquery.fancybox.min.css";
-
-// Assets
+//region DO NOT TOUCH
+// Development Assets
 const _assets_css = _dev_dir + "/sass";
 const _assets_js  = _dev_dir + "/js";
-const _assets_img = _dev_dir + "img";
+const _assets_img = _dev_dir + "/img";
+const _bs_src_js  = _npm_dir + "/bootstrap/js/dist";
+//endregion
 
-/**
- * We'll be setting up our WordPress based options and paths
- * This includes our BrowserSyn settings
- *
- * @type {string}
- * @private
- */
+//region Theme Variables
+const addPaths           = ( ...paths ) => paths.reduce( ( p, c ) => p.concat( c ), [] );
 const _theme_name        = "base";
 const _themes_assets_dir = "../wp-content/themes/" + _theme_name + "/assets";
-const _theme_css_dir     = _themes_assets_dir + "/css";
-const _theme_js_dir      = _themes_assets_dir + "/js";
-const _theme_img_dir     = _themes_assets_dir + "/img";
+const _theme_css_dir     = _themes_assets_dir + "/css/";
+const _theme_js_dir      = _themes_assets_dir + "/js/";
+const _theme_img_dir     = _themes_assets_dir + "/img/";
+//endregion
+
+/*======================================
+ 3. Array Variables for Gulp
+ ======================================*/
+
+//region Bootstrap
+// Bootstrap 4 Files. Pick either all or core.
+const _bs_files = {
+	// Full Build
+	all:  {
+		script: _npm_dir + "/bootstrap/dist/js/bootstrap.bundle.min.js",
+		styles: _npm_dir + "/bootstrap/dist/css/*.min.css"
+	},
+	// Custom Core
+	core: {
+		styles:    [
+			// Base Styles
+			_npm_dir + "/bootstrap/dist/css/*.min.js",
+		],
+		script:    [
+			// Popper
+			_npm_dir + "/popper.js/dist/umd/popper.js",
+			// Base
+			_npm_dir + "/bootstrap/dist/js/bootstrap.min.js",
+			// Util
+			_bs_src_js + "/util.js"
+		],
+		reqPopper: [
+			// Dropdown
+			_bs_src_js + "/dropdown.js"
+		],
+		// All of Boootstrap 4's Plugins we use. Comment out the ones you don't plan to use from here.
+		plugins:   [
+			// Alert
+			_bs_src_js + "/alert.js",
+			// Button
+			_bs_src_js + "/button.js",
+			// Collapse/Accordion
+			_bs_src_js + "/collapse.js",
+			// Modal
+			_bs_src_js + "/modal.js",
+			// Popover
+			_bs_src_js + "/popover.js",
+			// Tab
+			_bs_src_js + "/tab.js",
+			// Tooltip
+			_bs_src_js + "/tooltip.js",
+		],
+	},
+};
+//endregion
+
+//region Alternate Javascript or CSS Plugins
+const additionalPlugins = {
+	scripts: [
+		// Data Tables
+		_npm_dir + "/datatables.net-dt/js/dataTables.dataTables.min.js",
+		// Fancy Box
+		_npm_dir + "/@fancyapps/fancybox/dist/jquery.fancybox.min.js",
+		// Owl-Carousel-2
+		_npm_dir + "/owl-carousel-2/owl.carousel.min.js",
+		// Paroller
+		_npm_dir + "/paroller.js/dist/jquery.paroller.min.js",
+		// Scroll Reveal
+		_npm_dir + "/scrollreveal/dist/scrollreveal.min.js",
+	],
+	styles:  [
+		// Data Tables
+		_npm_dir + "/datatables.net-dt/css/jquery.dataTables.min.css",
+		// Fancybox
+		_npm_dir + "/@fancyapps/fancybox/dist/jquery.fancybox.min.css",
+		// Owl-Carousel-2
+		_npm_dir + "/owl-carousel-2/assets/owl.carousel.min.css",
+		// Owl-Carousel-2 Default
+		_npm_dir + "/owl-carousel-2/assets/owl.theme.default.min.css",
+	],
+	media:   [
+		// Data Tables
+		_npm_dir + "/datatables.net-dt/images/",
+		// Owl-Carousel-2 Ajax Loader
+		_npm_dir + "/owl-carousel-2/assets/ajax-loader.gif"
+	]
+};
+//endregion
+
+//region Custom Theme Assets
+const _core_js = {
+	script: _assets_js + "/core/*.js"
+};
+//endregion
+
+//region Fonts
+const fonts = {
+	fa5: {
+		styles: _npm_dir + "/@fontawesome/fontawesome-pro/css/all.min.css"
+
+	}
+};
+//endregion
 
 /*======================================
  3. Identify Plugins Used
  ======================================*/
 
-/**
- * * In this variable, change it from true to false if you wish to
- * use every BootStrap javascript element, otherwise uncomment
- * the scripts you plan on using.
- *
- * If you plan on just using Bootstraps core ONLY, change _custom_bs to 'core'
- *
- * This helps on cutting down the file size of the application vendor script
- *
- * @type {string}
- * @private
- */
-const _custom_bs   = "all";
-let bs_js_compile  = "";
-let bs_css_compile = "";
+let _bs_compile = _bs_files.all.script;
 
-// Plugin Dirs
-const _bs_alert    = _bs_src_js + "/alert.*";
-const _bs_button   = _bs_src_js + "/button.*";
-const _bs_collapse = _bs_src_js + "/collapse.*";
-const _bs_dropdown = _bs_src_js + "/dropdown.*";
-const _bs_modal    = _bs_src_js + "/modal.*";
-const _bs_popover  = _bs_src_js + "/popover.*";
-const _bs_tab      = _bs_src_js + "/tab.*";
-const _bs_tooltip  = _bs_src_js + "/tooltip.*";
-const _bs_util     = _bs_src_js + "/util.*";
+if ( bs4_full !== true ) {
+	_bs_compile = addPaths(
+		_bs_files.core.script,
+		_bs_files.core.reqPopper,
+		_bs_files.core.plugins
+	);
+}
 
-if ( _custom_bs === "all" ) {
-	bs_js_compile  = _bs_dist_all_js;
-	bs_css_compile = _bs_dist_all_css;
-} else if ( _custom_bs === "core" ) {
-	bs_js_compile  = _bs_dist_core_js;
-	bs_css_compile = _bs_dist_core_css;
-} else {
-	gulp.task( "build:bs:js", () => {
+gulp.task( "build:vendor:scripts", () => {
+	return gulp
+		.src( addPaths( _bs_compile, additionalPlugins.scripts ) )
+		.pipe( sourcemaps.init() )
+		.pipe( concat( "application-vendor.js" ) )
+		.pipe( uglify() )
+		.pipe( sourcemaps.write() )
+		.on( "error", handleError )
+		.pipe( gulp.dest( _theme_js_dir ) )
+		;
+} );
 
-		// Define Bootstrap
-		let bs4_scripts = [
-			// Do not alter the order, just comment out what is not needed.
+gulp.task( "hello", function() {
+	console.log( _bs_compile );
+} );
 
-			// MUST BE ENABLED IF USING TOOLTIP OR POPOVERS AND MUST BE FIRST
-			// If you are not using Tooltip or popover, this can be commented out.
-			_popper,
-			// MUST BE INCLUDED IF USING: Alerts, Dropdown, Popover, Tab, Tooltips
-			_bs_util,
-			// MUST BE INCLUDED FOR THE NAVIGATION UNLESS WE ARE BUILDING A CUSTOM ONE
-			// Dropdown: http://getbootstrap.com/docs/4.1/components/dropdowns/
-			_bs_dropdown,
-			// Alert: http://getbootstrap.com/docs/4.1/components/alerts/#javascript-behavior
-			_bs_alert,
-			// Tab: http://getbootstrap.com/docs/4.1/components/navs/#javascript-behavior
-			_bs_tab,
-			// Tooltip: http://getbootstrap.com/docs/4.1/components/tooltips/
-			_bs_tooltip,
-			// ## END UTIL REQUIRE ##
+/*======================================
+ Functions
+ ======================================*/
 
-			// Button: http://getbootstrap.com/docs/4.1/components/buttons/#methods
-			_bs_button,
-			// Accordion: http://getbootstrap.com/docs/4.1/components/collapse/
-			_bs_collapse,
-			// Modal: http://getbootstrap.com/docs/4.1/components/modal/
-			_bs_modal,
-			// Popover: http://getbootstrap.com/docs/4.1/components/popovers/
-			_bs_popover,
-		];
-
-		// Define Specific Plugins we'll use
-		let plugin_scripts = []
-
-	} );
-	gulp.task( "build:bs:css", () => {
-
-	} )
+// Error reporting function
+function handleError( err ) {
+	console.log( err.toString() );
+	this.emit( "end" );
 }
 
 /*======================================
- Clean Task
+ Final Commands
  ======================================*/
 
-// Clean Task
-// What we"re doing is cleaning our vendor and custom CSS files.
-gulp.task( "clean", function() {
-	return del( [
-		"dist", gulp.series( [
-			"/dev/sass/application-vendor.scss",
-			"/dev/sass/application.scss"
-		] )
-	] );
-} );
+gulp.task(
+	"default",
+	gulp.parallel( [ "build:vendor:scripts" ] )
+);
 
-// Copy third party libraries from node_modules into /vendor
-gulp.task( "vendor:js", function() {
-	return gulp.src( [] )
-} );
+//region File Notes
+// Note that the above is the same as this, except that if one of them is a string it will be expanded
+// The ... is an operator that will handle a scalar
+// to an array of characters, which is not what you want, so don't do this, use addPaths:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters
+// _bs_compile = [
+// 	..._bs_files.core.script,
+// 	..._bs_files.core.reqPopper,
+// 	..._bs_files.core.plugins
+// ];
+//endregion
