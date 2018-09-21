@@ -1,4 +1,7 @@
 /**
+ * Author: Nick Makris
+ * Author URI: makris.io
+ *
  * 1. Required Node Modules
  * 2. Path Variables - DO NOT TOUCH
  * 3. Array Variables for Gulp
@@ -17,27 +20,28 @@
 // GOING TO USE ON THIS SITE
 const bs4_full = false;
 
-//region Required
-const del          = require( "del" );
-const browserSync  = require( "browser-sync" ).create();
-const url          = require( "url" );
-const userHome     = require( "user-home" );
-const runSequence  = require( "run-sequence" );
-const glob         = require( "glob" );
-const gulp         = require( "gulp" );
-const babelCore    = require( "@babel/core" );
+//region Required Plugins
+const $            = require("jquery");
 const autoprefixer = require( "gulp-autoprefixer" );
+const browserSync  = require( "browser-sync" ).create();
 const cleanCSS     = require( "gulp-clean-css" );
 const concat       = require( "gulp-concat" );
+const del          = require( "del" );
+const dt           = require( "datatables.net" );
+const dtBS4        = require( "datatables.net-bs4");
+const glob         = require( "glob" );
+const gulp         = require( "gulp" );
 const htmlreplace  = require( "gulp-html-replace" );
+const jpegCompress = require( "imagemin-jpeg-recompress" );
+const merge        = require( "merge-stream" );
+const runSequence  = require( "run-sequence" );
 const rename       = require( "gulp-rename" );
 const postcss      = require( "gulp-postcss" );
 const sass         = require( "gulp-sass" );
 const sourcemaps   = require( "gulp-sourcemaps" );
-const uglify       = require( "gulp-uglify" );
-const jpegCompress = require( "imagemin-jpeg-recompress" );
-const merge        = require( "merge-stream" );
-const dataTables   = require( "datatables.net-dt" );
+const uglify       = require('gulp-uglify-es').default;
+const url          = require( "url" );
+const userHome     = require( "user-home" );
 //endregion
 
 /*======================================
@@ -73,26 +77,30 @@ const _theme_img_dir     = _themes_assets_dir + "/img/";
 
 //region Bootstrap
 // Bootstrap 4 Files. Pick either all or core.
+// DO NOT ALTER ANY OF THE OBJECT ORDERS
 const _bs_files = {
-	// Full Build
+	// Bootstraps Full Build
 	all:  {
-		script: _npm_dir + "/bootstrap/dist/js/bootstrap.bundle.min.js",
-		styles: _npm_dir + "/bootstrap/dist/css/*.min.css"
+		scripts: _npm_dir + "/bootstrap/dist/js/bootstrap.bundle.min.js",
+		styles:  _npm_dir + "/bootstrap/dist/css/*.min.css"
 	},
 	// Custom Core
 	core: {
+		// Bootstraps Styles
 		styles:    [
 			// Base Styles
 			_npm_dir + "/bootstrap/dist/css/*.min.js",
 		],
-		script:    [
+		// Bootstraps Scripts
+		scripts:   [
 			// Popper
-			_npm_dir + "/popper.js/dist/umd/popper.js",
+			_npm_dir + "/popper.js/dist/umd/popper.min.js",
 			// Base
 			_npm_dir + "/bootstrap/dist/js/bootstrap.min.js",
 			// Util
 			_bs_src_js + "/util.js"
 		],
+		// This is required, do not comment out.
 		reqPopper: [
 			// Dropdown
 			_bs_src_js + "/dropdown.js"
@@ -107,12 +115,13 @@ const _bs_files = {
 			_bs_src_js + "/collapse.js",
 			// Modal
 			_bs_src_js + "/modal.js",
+			// Tooltip
+			_bs_src_js + "/tooltip.js",
 			// Popover
+			// NOTE: THIS REQUIRES TOOLTIP.JS!
 			_bs_src_js + "/popover.js",
 			// Tab
 			_bs_src_js + "/tab.js",
-			// Tooltip
-			_bs_src_js + "/tooltip.js",
 		],
 	},
 };
@@ -122,7 +131,8 @@ const _bs_files = {
 const additionalPlugins = {
 	scripts: [
 		// Data Tables
-		_npm_dir + "/datatables.net-dt/js/dataTables.dataTables.min.js",
+		_npm_dir + "/datatables.net/js/jquery.dataTables.min.js",
+		// _npm_dir + "/datatables.net-dt/js/dataTables.dataTables.min.js",
 		// Fancy Box
 		_npm_dir + "/@fancyapps/fancybox/dist/jquery.fancybox.min.js",
 		// Owl-Carousel-2
@@ -152,8 +162,11 @@ const additionalPlugins = {
 //endregion
 
 //region Custom Theme Assets
-const _core_js = {
-	script: _assets_js + "/core/*.js"
+const _dev_files = {
+	scripts: {
+		core:   _assets_js + "/core/**/*.js",
+		custom: _assets_js + "/scripts/**/*.js"
+	}
 };
 //endregion
 
@@ -170,30 +183,50 @@ const fonts = {
  3. Identify Plugins Used
  ======================================*/
 
-let _bs_compile = _bs_files.all.script;
+let _bs_js_compile = _bs_files.all.scripts;
 
 if ( bs4_full !== true ) {
-	_bs_compile = addPaths(
-		_bs_files.core.script,
+	_bs_js_compile = addPaths(
+		_bs_files.core.scripts,
 		_bs_files.core.reqPopper,
 		_bs_files.core.plugins
 	);
 }
 
 gulp.task( "build:vendor:scripts", () => {
-	return gulp
-		.src( addPaths( _bs_compile, additionalPlugins.scripts ) )
+	const buildVendorScripts =  gulp
+		.src( addPaths( _bs_js_compile, additionalPlugins.scripts, _dev_files.scripts.core ) )
 		.pipe( sourcemaps.init() )
 		.pipe( concat( "application-vendor.js" ) )
 		.pipe( uglify() )
-		.pipe( sourcemaps.write() )
+		.pipe( sourcemaps.write('.') )
 		.on( "error", handleError )
 		.pipe( gulp.dest( _theme_js_dir ) )
 		;
+
+	return buildVendorScripts;
+
 } );
 
+gulp.task( "build:site:scripts", () => {
+	const buildSiteScripts = gulp
+		.src( addPaths( _dev_files.scripts.custom ) )
+		.pipe( sourcemaps.init() )
+		.pipe( concat( "application.js" ) )
+		.pipe( uglify() )
+		.pipe( sourcemaps.write('.') )
+		.on( "error", handleError )
+		.pipe( gulp.dest( _theme_js_dir ) )
+		;
+
+	return buildSiteScripts;
+} );
+
+/*======================================
+ Test Function
+ ======================================*/
 gulp.task( "hello", function() {
-	console.log( _bs_compile );
+	console.log();
 } );
 
 /*======================================
@@ -212,7 +245,10 @@ function handleError( err ) {
 
 gulp.task(
 	"default",
-	gulp.parallel( [ "build:vendor:scripts" ] )
+	gulp.parallel( [
+		"build:vendor:scripts",
+		"build:site:scripts"
+	] )
 );
 
 //region File Notes
