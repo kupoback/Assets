@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-@import "required/**/*";
-@import "components/*";
-@import "objects/*";
-@import "pages/*";
+@import "site/components/*";
+@import "site/objects/*";
+@import "site/pages/*";

@@ -1,0 +1,24 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  Logo
+======================================*/
+
+.navbar-brand { max-width: 170px;
+	@media ( min-width: 992px ) {
+		display: flex; align-items: center; padding-top: 0; padding-bottom: 0;
+	}
+	@media ( max-width: 991px ) {
+		margin: 0 auto;
+	}
+}
+
+.nav-mask {
+	@media ( min-width: 1025px ) {
+		display: none;
+	}
+}
+
+@media ( max-width: 991px ) {
+
+}

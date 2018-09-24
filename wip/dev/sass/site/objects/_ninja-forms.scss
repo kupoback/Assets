@@ -1,0 +1,20 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  Ninja Forms
+======================================*/
+.nf-form-wrap {
+	.label-left {
+		.nf-field-label { width: auto; }
+	}
+}
+
+@media ( max-width: 991px ) {
+	.nf-form-cont {
+		.nf-form-layout {
+			.nf-field-container {  margin-left: 0; margin-bottom: 40px;
+				&.one-half { width: 100%; margin-left: 0; }
+			}
+		}
+	}
+}

@@ -2,7 +2,7 @@
 
   "use strict";
 
-	const defaultOptionSettings = {
+	let defaultOptionSettings = {
 			loop: true,
 			margin: 10,
 			items: 1,

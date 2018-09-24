@@ -1,0 +1,39 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  Content Blocks
+======================================*/
+.block {
+	.row-container { padding-top: 40px; padding-bottom: 40px;
+		> .row-block {
+			&:last-of-type { margin-bottom: 0;
+				&.block-row { margin-bottom: 0; }
+			}
+		}
+	}
+
+	p + ul { margin-top: 20px; margin-bottom: 20px; }
+	ul { padding-left: 15px;
+		li { margin-bottom: 10px;
+			&:last-of-type { margin-bottom: 0; }
+		}
+	}
+
+	&:last-of-type {
+		.row-container { border: 0; }
+	}
+
+}
+
+
+.header-row { margin-bottom: 40px; }
+
+.block-row { margin-bottom: 40px;
+	&:last-of-type { margin-bottom: 0; }
+}
+
+.button-container { text-align: center; }
+
+/*  Block Specific
+======================================*/
+.has-bkgd-img { color: transparent; }

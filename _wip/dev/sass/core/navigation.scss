@@ -1,0 +1,156 @@
+@import "../settings/_settings.scss";
+@import "../settings/_mixins.scss";
+
+/* ====================================
+  Basic Navigation Declarations
+  DO NOT OVERRIDE
+======================================*/
+
+.nav-slider{ transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out; }
+
+.navbar-toggler{ float: left; display: none; padding: 0; }
+
+.nav-mask{ position: fixed; z-index: 100; top: 0; left: 0; overflow: hidden; display: none; opacity: 0; width: 100%; height: 100%; transition: opacity 0.25s, width 0s 0.25s, height 0s 0.25s; background: rgba(0, 0, 0, 0.3); }
+
+.has-active-menu{
+	.nav-mask{ display: block; opacity: 1; transition: opacity 0.25s; }
+}
+
+.navbar-brand,
+.nav-slider{ z-index: 9999; }
+
+.navbar{ padding-top: 0; padding-bottom: 0;
+	.navbar-nav{
+		@media (min-width: 992px){
+			align-items: center; height: 100%;
+		}
+
+		> .nav-item{ width: 100%;
+			a{ position: relative; }
+
+			&.current-page-ancestor,
+			&.current-menu-item,
+			&.current_page_item{ background: #333333;
+				a{ color: #FFFFFF; position: relative;
+					@media ( min-width: 992px ) {
+						padding: 1rem; display: flex; align-items: center;
+						&:after { margin-left: 5px; }
+					}
+				}
+			}
+
+		}
+
+		.menu-item-has-children{
+			&:hover{
+				.dropdown-menu{ display: block; }
+			}
+			.dropdown-menu{ margin-top: 0; border-radius: 0; border: 0; padding: 0;
+				li{
+					a{ color: #000000; padding: 1rem; background: transparent; }
+					&:hover{ background: #333333;
+						a{ color: #FFFFFF;}
+					}
+					&.current_page_item{ background: #333333;
+						a{ color: #FFFFFF; }
+					}
+				}
+			}
+		}
+
+	}
+
+}
+
+@media (max-width: 991px){
+
+	.navbar-toggler{ display: block; }
+
+	.nav-slider{
+		//opacity: 0;
+		position: fixed;z-index: 99999; background-color: #232323;
+
+		.navbar-nav{
+			@media (min-width: 992px){
+				margin-left: 30px; margin-top: 20px;
+			}
+			.nav-item{ float: none;
+				&.menu-item-has-children{
+					> .nav-link{
+						&:after{ content: ''; display: block; position: absolute; top: 50%; right: 15px; border: 0; background: #FFFFFF; width: 25px; height: 2px; transition: all 0.2s; }
+						&:before{ content: ''; display: block; position: absolute; top: 50%; right: 15px; border: 0; background: #FFFFFF; width: 25px; height: 2px; transform: rotate(90deg); transition: all 0.2s; }
+					}
+
+					&.show{
+						> .nav-link{
+							&:before{ transform: rotate(0); }
+						}
+					}
+
+				}
+				.nav-link{ align-items: center; position: relative; padding-left: 1rem; padding-right: 1rem; }
+			}
+			.dropdown-menu{
+				.dropdown-item{ color: #232323;
+					&:after{ background: #232323 !important; }
+					&:before{ background: #232323 !important; }
+				}
+				&.show{
+					.dropdown-item{
+						@media (max-width: 991px){
+							&.active{ color: #FFFFFF;
+								&:after{ background: #FFFFFF !important; }
+								&:before{ background: #FFFFFF !important; }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.navbar-nav .nav-item + .nav-item{ margin-left: 0; }
+
+	}
+	body.has-active-menu{
+		overflow: hidden;
+	}
+	/* next */
+	.nav-slider{
+		width: 100%;
+		height: 100%;
+		overflow-y: scroll;
+		top: 0;
+		right: 0;
+		transform: translateX(100%);
+	}
+	.has-active-menu{
+		.nav-slider{ padding-bottom: 3rem;
+			//opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
+	.navbar-toggler{ position: absolute; right: 15px; border: none;
+		&:focus{ outline: 0; }
+		.toggle-icon{ display: block; width: 25px; height: 2px; margin-bottom: 6px; transition: all 0.15s ease-in-out; transform: rotate(0deg); background-color: #FFFFFF;
+			&:last-of-type{ width: 17px; float: right; margin-bottom: 0;}
+		}
+	}
+	.has-active-menu{
+		.navbar-toggler{
+			.toggle-icon{
+				&:first-of-type{ transform: rotate(45deg); margin-top: 20px; }
+				&:last-of-type{ transform: rotate(-45deg); width: 25px; margin-top: -16px; }
+				&:nth-child(2){ background: transparent}
+			}
+		}
+	}
+
+}
+
+@media (min-width: 320px) and (max-width: 768px){
+	.nav-slider{
+		width: 100%;
+		transform: translateX(100%);
+	}
+}

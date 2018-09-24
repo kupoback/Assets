@@ -1,0 +1,14 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  Gallery
+======================================*/
+.gallery-content {
+	.column-content { margin-bottom: 40px; }
+	.gallery-container {
+		a { outline: 0!important; }
+		.row {
+			&:not(:last-of-type) { margin-bottom: 20px;}
+		}
+	}
+}

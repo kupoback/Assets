@@ -1,0 +1,15 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  Fancybox
+======================================*/
+.logged-in {
+	.fancybox-toolbar {
+		@media ( min-width: 600px ) {
+			top: 46px;
+		}
+		@media ( min-width: 783px) {
+			top : 32px;
+		}
+	}
+}
