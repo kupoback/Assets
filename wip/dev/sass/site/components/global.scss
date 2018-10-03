@@ -29,9 +29,6 @@ a {
 /*  Global Classes
 ======================================*/
 .full-height { min-height: 100%; }
-
-.container {
-	&:empty { display: none!important; }
-}
-
+.hidden { display: none; }
 .mlr-auto { margin-left: auto; margin-right: auto; }
+.svg-set-width { width: 100%; }
