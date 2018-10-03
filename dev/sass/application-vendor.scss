@@ -1,5 +1,61 @@
 @charset "UTF-8";
 
+@import "./vendor/bs/functions";
+@import "./vendor/bs/variables";
+@import "./vendor/bs/mixins";
+@import "./vendor/bs/root";
+@import "./vendor/bs/reboot";
+@import "./vendor/bs/type";
+@import "./vendor/bs/images";
+@import "./vendor/bs/grid";
+@import "./vendor/bs/transitions";
+@import "./vendor/bs/dropdown";
+@import "./vendor/bs/nav";
+@import "./vendor/bs/navbar";
+@import "./vendor/bs/media";
+@import "./vendor/bs/close";
+@import "./vendor/bs/utilities";
+@import "./vendor/bs/print";
+@import "./vendor/bootstrap.additions";
+
+
 // Comment out the Boostrap version you don't need. Only run one.
 // Make sure to also comment out it's appropriate javascript file
-@import "vendor/*";
+
+//@import "./vendor/bs/buttons";
+//@import "./vendor/bs/button-group";
+//@import "./vendor/bs/card";
+//@import "./vendor/bs/tables";
+//@import "./vendor/bs/list-group";
+//@import "./vendor/bs/list-modal";
+// Dependent on each other
+//@import "./vendor/bs/forms";
+//@import "./vendor/bs/custom-forms";
+//@import "./vendor/bs/input-group";
+// End dependency
+
+// Dependent on each other
+//@import "./vendor/bs/popover";
+//@import "./vendor/bs/tooltip";
+// End dependency
+
+//Uncommon files
+//@import "./vendor/bs/code";,
+//@import "./vendor/bs/alert";,
+//@import "./vendor/bs/badge";,
+//@import "./vendor/bs/breadcrumb";,
+//@import "./vendor/bs/carousel";,
+//@import "./vendor/bs/jumbotron";,
+//@import "./vendor/bs/pagination";,
+//@import "./vendor/bs/progress";,
+
+// Plugins
+// @import "./vendor/owl.carousel";
+// @import "./vendor/owl.theme.default";
+// @import "./vendor/dataTablesBS4";
+// @import "./vendor/jquery.fancybox";
+
+@import "./vendor/wp";
+@import "./vendor/animate";
+
+@import "./vendor/plugins/*";

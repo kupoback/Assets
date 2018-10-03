@@ -2,12 +2,14 @@
 
   "use strict";
 
-  // Controls the custom Data Table created
-  $('[data-table]').DataTable({
-    "paging"  : false,
-    "info"  : false,
-    "searching": false,
-  });
+  if ( typeof DataTable !== 'undefined' ) {
+	  // Controls the custom Data Table created
+	  $( '[data-table]' ).DataTable( {
+		  "paging":    false,
+		  "info":      false,
+		  "searching": false,
+	  } );
+  }
 
 
   $(".collapse").on('show.bs.collapse', function(e) {

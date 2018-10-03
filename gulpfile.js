@@ -1,215 +1,382 @@
-var url = 'https://base.app/', // Your testing URL
-	proj_dir = '../wp-content/themes/base', // Give a project path
-	theme_name = 'base', // Give a theme path if WP
-	// EXAMPLE
-	// ssl_key = '/Users/username/.valet/Certificates/domain.TLS.key',
-	ssl_key = '/Users/nmak/.valet/Certificates/mcshane.app.key', // Replace with path for your SSL key
-	ssl_cert = '/Users/nmak/.valet/Certificates/mcshane.app.crt', // Replace with path for your SSL key
-	gulp = require( 'gulp' ),
-	sass = require( 'gulp-sass' ),
-	autoprefixer = require( 'gulp-autoprefixer' ),
-	globbing = require( 'gulp-css-globbing' ),
-	sourcemaps = require( 'gulp-sourcemaps' ),
-	imagemin = require( 'gulp-imagemin' ),
-	flatten = require( 'gulp-flatten' ),
-	newer = require( 'gulp-newer' ),
-	concat = require( 'gulp-concat' ),
-	uglify = require( 'gulp-uglify' ),
-	svg = require( 'gulp-svg-sprite' ),
-	fileinclude = require( 'gulp-file-include' ),
-	filter = require( 'gulp-filter' ),
-	gutil = require( 'gulp-util' ),
-	path = require( 'path' ),
-	browserSync = require( 'browser-sync' ),
-	reload = browserSync.reload;
+var url                    = "https://base.app/", // Your testing URL
+    proj_dir               = "../wp-content/themes/base", // Give a project path
+    theme_name             = "base", // Give a theme path if WP
+    // EXAMPLE
+    // ssl_key = '/Users/username/.valet/Certificates/domain.TLS.key',
+    ssl_key                = "/Users/nmak/.valet/Certificates/base.app.key", // Replace with path for your SSL key
+    ssl_cert               = "/Users/nmak/.valet/Certificates/base.app.crt", // Replace with path for your SSL key
+    gulp                   = require( "gulp" ),
+    sass                   = require( "gulp-sass" ),
+    autoprefixer           = require( "gulp-autoprefixer" ),
+    globbing               = require( "gulp-css-globbing" ),
+    sourcemaps             = require( "gulp-sourcemaps" ),
+    flatten                = require( "gulp-flatten" ),
+    rename                 = require( "gulp-rename" ),
+    newer                  = require( "gulp-newer" ),
+    concat                 = require( "gulp-concat" ),
+    uglify                 = require( "gulp-uglify" ),
+    browserSync            = require( "browser-sync" ),
+    reload                 = browserSync.reload,
+    _NPM_DIR               = "./node_modules",
+    _BS_DIR                = _NPM_DIR + "/bootstrap",
+    _BS_CSS                = _BS_DIR + "/scss/",
+    addPaths               = (...paths) => paths.reduce( (p, c) => p.concat( c ), [] ),
+    _BS_CSS_MUST_IMPORT    = [
+	    // Do not uncomment
+	    _BS_CSS + "_functions.scss",
+	    _BS_CSS + "_variables.scss",
+	    _BS_CSS + "_mixins.scss",
+	    _BS_CSS + "_reboot.scss",
+	    _BS_CSS + "_grid.scss",
+	    _BS_CSS + "_transitions.scss",
+	    _BS_CSS + "_media.scss",
+	    _BS_CSS + "_root.scss",
+	    _BS_CSS + "_images.scss",
+	    _BS_CSS + "_utilities.scss",
+	    _BS_CSS + "_print.scss",
+	    _BS_CSS + "_close.scss",
+	    _BS_CSS + "_type.scss",
+	    _BS_CSS + "_dropdown.scss",
+	    _BS_CSS + "_nav.scss",
+	    _BS_CSS + "_navbar.scss",
+    ],
+    __BS_ADDITIONAL_IMPORT = [
+	
+	    // Uncomment what you need
+	    // Common files
+	    // _BS_CSS + '_buttons.scss',
+	    // _BS_CSS + '_button-group.scss',
+	    // _BS_CSS + '_card.scss',
+	    // _BS_CSS + '_tables.scss',
+	    // _BS_CSS + '_list-group.scss',
+	    // _BS_CSS + '_modal.scss',
+	    // Dependent on each other
+	    // _BS_CSS + '_forms.scss',
+	    // _BS_CSS + '_custom-forms.scss',
+	    // _BS_CSS + '_input-group.scss',
+	    // End dependency
+	
+	    // Dependent on each other
+	    // _BS_CSS + '_popover.scss',
+	    // _BS_CSS + '_tooltip.scss',
+	    // End dependency
+	
+	    //Uncommon files
+	    // _BS_CSS + '_code.scss',
+	    // _BS_CSS + '_alert.scss',
+	    // _BS_CSS + '_badge.scss',
+	    // _BS_CSS + '_breadcrumb.scss',
+	    // _BS_CSS + '_carousel.scss',
+	    // _BS_CSS + '_jumbotron.scss',
+	    // _BS_CSS + '_pagination.scss',
+	    // _BS_CSS + '_progress.scss',
+    ],
+    _BS_JS                 = _BS_DIR + "/dist/js/bootstrap.bundle.min.js",
+    _PLUGINS               = {
+	    _dataTables:    {
+		    scripts: {
+			    required: _NPM_DIR +"/datatables.net/js/jquery.dataTables.js",
+			    bs4: _NPM_DIR + "/datatables.net-bs4/js/dataTables.bootstrap4.js"
+		    },
+		    styles:  _NPM_DIR + "/datatables.net-bs4/css/dataTables.bootstrap4.css"
+	    },
+	    _fancybox:      {
+		    scripts: _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.js",
+		    styles:  _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.css"
+	    },
+	    _owlCarousel:   {
+		    scripts: _NPM_DIR + "/owl-carousel-2/owl.carousel.js",
+		    styles:  {
+			    required:   _NPM_DIR + "/owl-carousel-2/assets/owl.carousel.css",
+			    additional: _NPM_DIR + "/owl-carousel-2/assets/owl.theme.default.css",
+		    },
+		    media:   _NPM_DIR + "/owl-carousel-2/assets/*.{jpg,png,gif}",
+	    },
+	    _scrollReveal:  {
+		    scripts: _NPM_DIR + "/scrollreveal/dist/scrollreveal.js"
+	    },
+	    _skipLinkFocus: {
+		    scripts: _NPM_DIR + "/skip-link-focus/skip-link-focus.js"
+	    }
+    };
+
+//Bootstrap CSS Imports
+gulp.task( "bootstrap:css", function () {
+	
+	var _BS_MIXINS = gulp
+		.src( [
+			_BS_CSS + "mixins/*",
+		] )
+		.pipe( gulp.dest( "./dev/sass/vendor/bs/mixins" ) );
+	
+	var _BS_UTIL = gulp
+		.src( [
+			_BS_CSS + "utilities/*",
+		] )
+		.pipe( gulp.dest( "./dev/sass/vendor/bs/utilities" ) );
+	
+	var _BS_SCSS_FILES = gulp
+		.src( addPaths( _BS_CSS_MUST_IMPORT, _BS_ADDITIONAL_IMPORT ) )
+		.pipe( gulp.dest( "./dev/sass/vendor/bs" ) );
+	
+	return _BS_MIXINS + _BS_UTIL + _BS_SCSS_FILES;
+	
+} );
+
+//Import Plugin CSS
+gulp.task( "plugin:css", function () {
+	
+	var owlAssets = '';
+	
+	// COMMENT OUT WHAT YOU DON'T NEED
+	var _PLUGIN_STYLES = gulp
+		.src( addPaths(
+			_PLUGINS._dataTables.styles,
+			_PLUGINS._fancybox.styles,
+			_PLUGINS._owlCarousel.styles.required,
+			_PLUGINS._owlCarousel.styles.additional
+		) )
+		// We need to convert these to .scss files
+		.pipe( rename( {
+			suffix:  "-convert",
+			extname: ".scss"
+		} ) )
+		.pipe( gulp.dest( "./dev/sass/vendor/plugins" ) );
+	
+	if ( _PLUGIN_STYLES.includes(_PLUGINS._owlCarousel.styles.required ) )
+		owlAssets = gulp
+			.src(addPaths(
+				_PLUGINS._owlCarousel.media
+			))
+			.pipe(gulp.dest(proj_dir + '/assets/img'));
+	
+	return _PLUGIN_STYLES + owlAssets;
+	
+} );
 
 //Vendor CSS
-gulp.task( 'vendor-css', function() {
-	return gulp.src( 'dev/sass/application-vendor.scss' )
+gulp.task( "vendor:css", function () {
+	return gulp
+		.src( "dev/sass/application-vendor.scss" )
 		.pipe( flatten() )
-		.pipe( newer( 'dev/sass/vendor/*' ) )
+		.pipe( newer( "dev/sass/vendor/*" ) )
 		.pipe( sourcemaps.init() )
-		.pipe( globbing( { extensions: '.scss' } ) )
-		.pipe( sass( { outputStyle: 'compressed' } ).on( 'error', sass.logError ) )
-		.pipe( autoprefixer({
-			flexbox: true,
-			cascade: false,
-			browsers: ['last 2 versions'],
-			add : true,
-			remove: false,
-		}) )
-		.pipe( sourcemaps.write() )
-		.on( 'error', handleError )
-		.pipe( gulp.dest( proj_dir + '/assets/css' ) )
-		;
+		.pipe( sourcemaps.identityMap() )
+		.pipe( globbing( {
+			extensions: ".scss"
+		} ) )
+		.pipe( sass( {
+			outputStyle: "compressed"
+		} ).on( "error", sass.logError ) )
+		.pipe( autoprefixer( {
+			flexbox:  true,
+			cascade:  false,
+			browsers: [ "last 2 versions" ],
+			add:      true,
+			remove:   false,
+		} ) )
+		.pipe( rename( {
+			suffix:  ".min",
+		} ) )
+		.pipe( sourcemaps.write( "./" ) )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/assets/css" ) );
 } );
 
 // Default CSS
-gulp.task( 'css', function() {
-	return gulp.src( 'dev/sass/application.scss' )
+gulp.task( "application:css", function () {
+	return gulp
+		.src( "dev/sass/application.scss" )
 		.pipe( flatten() )
-		.pipe( newer( 'dev/sass/**/*' ) )
+		.pipe( newer( "dev/sass/**/*" ) )
 		.pipe( sourcemaps.init() )
-		.pipe( globbing( { extensions: '.scss' } ) )
-		.pipe( sass( { outputStyle: 'compressed' } ).on( 'error', sass.logError ) )
+		.pipe( sourcemaps.identityMap() )
+		.pipe( globbing( {
+			extensions: ".scss"
+		} ) )
+		.pipe( sass( {
+			outputStyle: "compressed"
+		} ).on( "error", sass.logError ) )
 		.pipe( autoprefixer( {
-			flexbox: true,
-			cascade: false,
-			browsers: ['last 2 versions'],
-			add : true,
-			remove: false,
+			flexbox:  true,
+			cascade:  false,
+			browsers: [ "last 2 versions" ],
+			add:      true,
+			remove:   false,
 		} ) )
-		.pipe( sourcemaps.write() )
-		.on( 'error', handleError )
-		.pipe( gulp.dest( proj_dir + '/assets/css' ) )
-		;
-} );
-
-gulp.task( 'vendor-js', function() {
-	return gulp.src( [ 'dev/js/vendor/*.js' ] )
-		.pipe( sourcemaps.init() )
-		.pipe( concat( 'application-vendor.js' ) )
-		.pipe( uglify() )
-		.pipe( sourcemaps.write() )
-		.on( 'error', handleError )
-		.pipe( gulp.dest( proj_dir + '/assets/js' ) )
-		;
-} );
-
-gulp.task( 'js', function() {
-	return gulp.src( [ 'dev/js/scripts/*.js' ] )
-		.pipe( sourcemaps.init() )
-		.pipe( concat( 'application.js' ) )
-    .pipe( uglify() )
-		.pipe( sourcemaps.write() )
-    .on( 'error', handleError )
-		.pipe( gulp.dest( proj_dir + '/assets/js' ) )
-		;
-} );
-
-gulp.task( 'theme-functions', function() {
-  return gulp.src( [ proj_dir + '/inc/core/basic/*.php' ] )
-    .pipe( concat( 'theme-functions.php', {
-      newLine: '\n?>\n'
-    } ) )
-    .on( 'error', handleError )
-    .pipe( gulp.dest( proj_dir + '/inc/compiled/theme/' ) )
-    ;
-} );
-
-gulp.task( 'field-groups', function() {
-  return gulp.src( [ proj_dir + '/inc/core/acf/field-groups/*.php' ] )
-    .pipe( concat( 'theme-field-groups.php', {
-      newLine: '\n?>\n'
-    } ) )
-    .on( 'error', handleError )
-    .pipe( gulp.dest( proj_dir + '/inc/compiled/theme/' ) )
-    ;
-} );
-
-gulp.task( 'custom-functions', function() {
-  return gulp.src( [ proj_dir + '/inc/custom/**/*.php' ] )
-    .pipe( concat( 'custom-functions.php', {
-      newLine: '\n?>\n'
-    } ) )
-    .on( 'error', handleError )
-    .pipe( gulp.dest( proj_dir + '/inc/compiled/custom/' ) )
-    ;
-} );
-
-gulp.task( 'custom-pt', function() {
-  return gulp.src( [ proj_dir + '/inc/cpt/**/*.php' ] )
-    .pipe( concat( 'custom-post-types.php', {
-      newLine: '\n?>\n'
-    } ) )
-    .on( 'error', handleError )
-    .pipe( gulp.dest( proj_dir + '/inc/compiled/custom/' ) )
-    ;
-} );
-
-gulp.task( 'media-files', function() {
-	return gulp.src( [
-		'dev/media/**/*',
-		'!dev/media/**/*.{jpg,jpeg,png,gif,ico,svg}'
-	] )
-		.pipe( flatten() )
-		.on( 'error', handleError )
-		.pipe( gulp.dest( proj_dir + '/assets/img' ) );
-} );
-
-gulp.task( 'html', function() {
-	return gulp.src( 'dev/html/*.html' )
-		.pipe( fileinclude( {
-			prefix: '@@',
-			basepath: '@file'
+		.pipe( rename( {
+			suffix:  ".min",
 		} ) )
-		.on( 'error', handleError )
-		.on( 'error', handleError );
+		.pipe( sourcemaps.write('./') )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/assets/css" ) )
+		;
 } );
 
-gulp.task( 'open', function() {
-
-	var files = [
-		'../**/*.php',
-		'../**/*.{png,jpg,gif}'
+// Impost Plugin JS
+gulp.task( "plugin:js", function () {
+	
+	// COMMENT OUT WHAT YOU DON'T NEED
+	var _PLUGIN_SCRIPTS = [
+		_PLUGINS._dataTables.scripts.required,
+		_PLUGINS._dataTables.scripts.bs4,
+		_PLUGINS._fancybox.scripts,
+		_PLUGINS._owlCarousel.scripts,
+		_PLUGINS._scrollReveal.scripts,
+		_PLUGINS._skipLinkFocus.scripts
 	];
+	
+	var COPY_PLUGIN_SCRIPTS = gulp
+		.src( addPaths( _PLUGIN_SCRIPTS ) )
+		.pipe( gulp.dest( "./dev/js/core/plugins" ) );
+	
+	var COPY_BS_SCRIPTS = gulp
+		.src( addPaths( _BS_JS ) )
+		.pipe( gulp.dest( "./dev/js/core/bs" ) );
+} );
 
+gulp.task( "vendor:js", function () {
+	return gulp
+		.src( [ "dev/js/core/**/*.js", "dev/js/core/*.js" ] )
+		.pipe( sourcemaps.init() )
+		.pipe( sourcemaps.identityMap() )
+		.pipe( concat( "application-vendor.js" ) )
+		.pipe( uglify() )
+		.on( "error", handleError )
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe( sourcemaps.write('./') )
+		// .pipe( gulp.dest( proj_dir + "/assets/js" ) );
+		.pipe( gulp.dest( "./" ) );
+} );
+
+gulp.task( "application:js", function () {
+	return gulp
+		.src( [ "dev/js/scripts/*.js" ] )
+		.pipe( sourcemaps.init() )
+		.pipe( sourcemaps.identityMap() )
+		.pipe( concat( "application.js" ) )
+		.pipe( uglify() )
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe( sourcemaps.write('./') )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/assets/js" ) );
+} );
+
+// Theme Functions
+gulp.task( "wp:theme:functions", function () {
+	return gulp
+		.src( [ proj_dir + "/inc/core/basic/*.php" ] )
+		.pipe( concat( "theme-functions.php", {
+			newLine: "\n?>\n"
+		} ) )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/inc/compiled/theme/" ) );
+} );
+
+// Field Groups
+gulp.task( "wp:theme:field_groups", function () {
+	return gulp
+		.src( [ proj_dir + "/inc/core/acf/field-groups/*.php" ] )
+		.pipe( concat( "theme-field-groups.php", {
+			newLine: "\n?>\n"
+		} ) )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/inc/compiled/theme/" ) );
+} );
+
+// Custom Functions
+gulp.task( "wp:custom", function () {
+	return gulp
+		.src( [ proj_dir + "/inc/custom/**/*.php" ] )
+		.pipe( concat( "custom-functions.php", {
+			newLine: "\n?>\n"
+		} ) )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/inc/compiled/custom/" ) );
+} );
+
+// Custom Post Type
+gulp.task( "wp:custom:posts", function () {
+	return gulp
+		.src( [ proj_dir + "/inc/cpt/**/*.php" ] )
+		.pipe( concat( "custom-post-types.php", {
+			newLine: "\n?>\n"
+		} ) )
+		.on( "error", handleError )
+		.pipe( gulp.dest( proj_dir + "/inc/compiled/custom/" ) );
+} );
+
+gulp.task( "project:open", function () {
+	
+	var files = [
+		"../**/*.php",
+		"../**/*.{png,jpg,gif}"
+	];
+	
 	var https_params = false;
-
+	
 	if ( ssl_key.length > 0 ) {
 		https_params = {
-			key: ssl_key,
+			key:  ssl_key,
 			cert: ssl_cert
 		};
 	}
-
+	
 	browserSync.init( files, {
-		proxy: url,
+		proxy:         url,
 		injectChanges: true,
-		https : https_params
+		https:         https_params
 	} );
-
+	
 } );
 
-gulp.task( 'watch', function() {
-
-	gulp.watch( 'dev/sass/vendor/*.scss', [ 'vendor-css' ] );
-	gulp.watch( 'dev/sass/**/**/*.scss', [ 'css' ] );
-	gulp.watch( 'dev/js/vendor/*.js', [ 'vendor-js' ] );
-	gulp.watch( [ 'dev/js/**/*.js', '!dev/js/vendor/*.js' ], [ 'js' ] );
-
+gulp.task( "project:watcher", function () {
+	
+	gulp
+		.watch( "dev/sass/vendor/**/*.scss", [ "vendor:css" ] );
+	gulp
+		.watch( [ "dev/sass/**/**/*.scss", "!dev/sass/vendor/**/*.scss" ], [ "application:css" ] );
+	gulp
+		.watch( "dev/js/core/**/*.js", [ "vendor:js" ] );
+	gulp
+		.watch( [ "dev/js/**/*.js", "!dev/js/core/*.js" ], [ "application:js" ] );
+	
 	// PHP Functions
-  gulp.watch( proj_dir + '/inc/core/**/*.php', ['theme-functions', 'field-groups'] );
-  gulp.watch( [proj_dir + '/inc/custom/**/*.php'], ['custom-functions'] );
-  gulp.watch( [proj_dir + '/inc/cpt/**/*.php'], ['custom-pt'] );
-
-	gulp.watch( [ proj_dir + '/assets/js/*.js', proj_dir + '/assets/css/*.css' ] ).on( 'change', reload );
-	gulp.watch( [ proj_dir + '/inc/compiled/*.php', ] ).on( 'change', reload );
-
+	gulp.watch( proj_dir + "/inc/core/**/*.php", [ "wp:theme:functions", "wp:theme:field_groups" ] );
+	gulp.watch( [ proj_dir + "/inc/custom/**/*.php" ], [ "wp:custom" ] );
+	gulp.watch( [ proj_dir + "/inc/cpt/**/*.php" ], [ "wp:custom:posts" ] );
+	
+	gulp.watch( [ proj_dir + "/assets/js/*.js", proj_dir + "/assets/css/*.css" ] ).on("change", reload);
+	gulp.watch( [ proj_dir + "/inc/compiled/*.php", ] ).on( "change", reload );
+	
 } );
 
-gulp.task( 'reload', [ 'vendor-css', 'css', 'vendor-js', 'js' ], function() {
-
+gulp.task( "project:reload", [ "vendor:css", "application:css", "vendor:js", "application:js" ], function () {
+	
 	browserSync.reload();
-
+	
 } );
 
 // Error reporting function
-function handleError( err ) {
+function handleError (err) {
 	console.log( err.toString() );
-	this.emit( 'end' );
+	this.emit( "end" );
 }
 
-gulp.task( 'default', [
-	'vendor-css',
-	'css',
-	'vendor-js',
-	'js',
-	'theme-functions',
-	'field-groups',
-	'custom-functions',
-	'custom-pt',
-	// 'open',
-	// 'reload',
-	'watch'
+gulp.task( "default", [
+	"vendor:css",
+	"application:css",
+	"vendor:js",
+	"application:js",
+	"wp:theme:functions",
+	"wp:theme:field_groups",
+	"wp:custom",
+	"wp:custom:posts",
+	"project:open",
+	"project:reload",
+	"project:watcher"
 ] );

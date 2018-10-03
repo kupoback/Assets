@@ -70,6 +70,9 @@ wp-snapshots/
 **/cache/
 node_modules/
 
+/dev/sass/vendor/bs/
+/dev/sass/vendor/plugins/
+
 #WP File Specifics
 wp-content/advanced-cache.php
 wp-content/object-cache.php
