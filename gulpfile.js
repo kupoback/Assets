@@ -186,7 +186,7 @@ gulp.task( "vendor:css", function () {
 // Default CSS
 gulp.task( "application:css", function () {
 	return gulp
-		.src( ["dev/sass/application.scss"], {base: 'src'} )
+		.src( ["dev/sass/application.scss"] )
 		.pipe( flatten() )
 		.pipe( newer( "dev/sass/**/*" ) )
 		.pipe( sourcemaps.init() )
