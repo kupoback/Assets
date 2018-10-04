@@ -1,15 +1,12 @@
 /*  Hero Slider
 ======================================*/
-.hero-container { position: relative; margin-bottom: 10px;
+.hero-container { position: relative;
 	.item-caption {
 		@media ( min-width: 768px ) {
 			position: absolute; top: 50%; left: 50%; transform: translate( -50%, -50% ); z-index: 999;
 		}
 		.col {
-			.hero-content { padding: 30px 0;
-				@media ( min-width: 768px ) {
-					padding: 30px;
-				}
+			.hero-content {
 				.hero-title {
 					h1 { }
 				}
@@ -21,7 +18,7 @@
 		}
 	}
 }
-.hero-image { position: relative; margin-bottom: 10px;
+.hero-image { position: relative;
 	@media ( min-width: 768px ) {
 		overflow: hidden;
 		img {object-fit: cover; width: 100%; }

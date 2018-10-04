@@ -25,24 +25,24 @@
 						&::placeholder { }
 					}
 					textarea { }
-					input[type=button] { appearance: none; @extend .btn;
+					input[type=button] { appearance: none;
 						&:hover { }
 					}
 				}
 				&.list-select-wrap {
 					.nf-field-element { position: relative;
-						&:after { content: '\f078'; font: normal normal normal 14px/1 FontAwesome; }
+						&:after { content: '\f078'; font: normal normal 900 14px/1 Font Awesome\ 5 Pro; }
 					}
 				}
 			}
 			&.submit-container {
 				.field-wrap {
-					.nf-field-label { display: none; }
-					.nf-field-element { text-align: center; }
+					.nf-field-label {  }
+					.nf-field-element {  }
 				}
 			}
 			&.label-hidden {
-				.nf-field-label { display: none!important; }
+				.nf-field-label {  }
 			}
 		}
 	}
