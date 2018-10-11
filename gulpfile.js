@@ -128,7 +128,7 @@ gulp.task( "plugin:css", function () {
 
 	var owlAssets = '';
 	var _styles = [
-		_PLUGINS._dataTables.styles,
+		// _PLUGINS._dataTables.styles,
 		_PLUGINS._fancybox.styles,
 		_PLUGINS._owlCarousel.styles.required,
 		_PLUGINS._owlCarousel.styles.additional
@@ -139,6 +139,7 @@ gulp.task( "plugin:css", function () {
 		.src( addPaths( _styles ) )
 		// We need to convert these to .scss files
 		.pipe( rename( {
+			prefix: "_",
 			suffix:  "-convert",
 			extname: ".scss"
 		} ) )
