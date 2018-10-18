@@ -79,7 +79,7 @@ var url                    = "https://base.app/", // Your testing URL
 	_PLUGINS               = {
 		_dataTables:    {
 			scripts: {
-				required: _NPM_DIR +"/datatables.net/js/jquery.dataTables.js",
+				required: _NPM_DIR + "/datatables.net/js/jquery.dataTables.js",
 				bs4: _NPM_DIR + "/datatables.net-bs4/js/dataTables.bootstrap4.js"
 			},
 			styles:  _NPM_DIR + "/datatables.net-bs4/css/dataTables.bootstrap4.css"
@@ -215,26 +215,33 @@ gulp.task( "application:css", function () {
 
 // Impost Plugin JS
 gulp.task( "plugin:js", function () {
-
+	
 	// COMMENT OUT WHAT YOU DON'T NEED
 	var _PLUGIN_SCRIPTS = [
 		_PLUGINS._dataTables.scripts.required,
-		_PLUGINS._dataTables.scripts.bs4,
 		_PLUGINS._fancybox.scripts,
 		_PLUGINS._owlCarousel.scripts,
 		_PLUGINS._scrollReveal.scripts,
 		_PLUGINS._skipLinkFocus.scripts
 	];
+	
+	var _PLUGIN_SCRIPTS_ADDONS = [
+		    _PLUGINS._dataTables.scripts.bs4,
+	    ];
 
 	var COPY_PLUGIN_SCRIPTS = gulp
 		.src( addPaths( _PLUGIN_SCRIPTS ) )
 		.pipe( gulp.dest( "./dev/js/core/plugins" ) );
-
+	
+	var COPY_PLUGIN_ADDON_SCRIPTS = gulp
+		.src( addPaths( _PLUGIN_SCRIPTS_ADDONS  ) )
+		.pipe( gulp.dest( "./dev/js/core" ) );
+	
 	var COPY_BS_SCRIPTS = gulp
 		.src( addPaths( _BS_JS ) )
 		.pipe( gulp.dest( "./dev/js/core/bs" ) );
 
-	return COPY_BS_SCRIPTS + COPY_PLUGIN_SCRIPTS;
+	return COPY_BS_SCRIPTS + COPY_PLUGIN_SCRIPTS + COPY_PLUGIN_ADDON_SCRIPTS;
 
 } );
 
