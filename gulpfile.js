@@ -15,8 +15,8 @@ var url                    = "https://base.app/", // Your testing URL
 	newer                  = require( "gulp-newer" ),
 	concat                 = require( "gulp-concat" ),
 	uglify                 = require( "gulp-uglify" ),
-	browserSync            = require( "browser-sync" ),
-	reload                 = browserSync.reload,
+	browserSync            = require( "browser-sync" ).create(),
+	reload                 = browserSync.reload(),
 	_PROJ_CSS              = proj_dir + "/assets/css",
 	_PROJ_JS               = proj_dir + "/assets/js",
 	_PROJ_IMG              = proj_dir + "/assets/img",
@@ -104,8 +104,11 @@ var url                    = "https://base.app/", // Your testing URL
 		}
 	};
 
+//region Import Tasks
 //Bootstrap CSS Imports
 gulp.task( "bootstrap:css", function () {
+
+	"use strict";
 
 	var _BS_MIXINS = gulp
 		.src( [ _BS_CSS + "mixins/*" ] )
@@ -126,12 +129,14 @@ gulp.task( "bootstrap:css", function () {
 //Import Plugin CSS
 gulp.task( "plugin:css", function () {
 
+	"use strict";
+
 	var owlAssets = '';
 	var _styles = [
 		// _PLUGINS._dataTables.styles,
-		_PLUGINS._fancybox.styles,
-		_PLUGINS._owlCarousel.styles.required,
-		_PLUGINS._owlCarousel.styles.additional
+		// _PLUGINS._fancybox.styles,
+		// _PLUGINS._owlCarousel.styles.required,
+		// _PLUGINS._owlCarousel.styles.additional
 	];
 
 	// COMMENT OUT WHAT YOU DON'T NEED
@@ -156,13 +161,54 @@ gulp.task( "plugin:css", function () {
 
 } );
 
+// Impost Plugin JS
+gulp.task( "plugin:js", function () {
+
+	"use strict";
+
+	// COMMENT OUT WHAT YOU DON'T NEED
+	var _PLUGIN_SCRIPTS = [
+		_PLUGINS._dataTables.scripts.required,
+		_PLUGINS._fancybox.scripts,
+		_PLUGINS._owlCarousel.scripts,
+		_PLUGINS._scrollReveal.scripts,
+		_PLUGINS._skipLinkFocus.scripts
+	];
+
+	var _PLUGIN_SCRIPTS_ADDONS = [
+		_PLUGINS._dataTables.scripts.bs4,
+	];
+
+	var COPY_PLUGIN_SCRIPTS = gulp
+		.src( addPaths( _PLUGIN_SCRIPTS ) )
+		.pipe( gulp.dest( "./dev/js/core/plugins" ) );
+
+	var COPY_PLUGIN_ADDON_SCRIPTS = gulp
+		.src( addPaths( _PLUGIN_SCRIPTS_ADDONS  ) )
+		.pipe( gulp.dest( "./dev/js/core" ) );
+
+	var COPY_BS_SCRIPTS = gulp
+		.src( addPaths( _BS_JS ) )
+		.pipe( gulp.dest( "./dev/js/core/bs" ) );
+
+	return COPY_BS_SCRIPTS + COPY_PLUGIN_SCRIPTS + COPY_PLUGIN_ADDON_SCRIPTS;
+
+} );
+//endregion
+
 //Vendor CSS
 gulp.task( "vendor:css", function () {
+
+	"use strict";
+
 	return gulp
 		.src( ["./dev/sass/application-vendor.scss"] )
 		.pipe( flatten() )
 		.pipe( newer( "./dev/sass/vendor/**/*" ) )
-		.pipe( sourcemaps.init() )
+		.pipe( sourcemaps.init({
+			loadMaps: true
+		}) )
+		.pipe(sourcemaps.identityMap())
 		.pipe( globbing( {
 			extensions: ".scss"
 		} ) )
@@ -181,16 +227,23 @@ gulp.task( "vendor:css", function () {
 		} ) )
 		.pipe( sourcemaps.write( ) )
 		.on( "error", handleError )
-		.pipe( gulp.dest( _PROJ_CSS ) );
+		.pipe( gulp.dest( _PROJ_CSS ) )
+		.pipe( browserSync.stream() );
 } );
 
 // Default CSS
 gulp.task( "application:css", function () {
+
+	"use strict";
+
 	return gulp
 		.src( ["dev/sass/application.scss"] )
 		.pipe( flatten() )
 		.pipe( newer( "dev/sass/**/*" ) )
-		.pipe( sourcemaps.init() )
+		.pipe( sourcemaps.init({
+			loadMaps: true
+		}) )
+		.pipe(sourcemaps.identityMap())
 		.pipe( globbing( {
 			extensions: ".scss"
 		} ) )
@@ -210,43 +263,14 @@ gulp.task( "application:css", function () {
 		.pipe( sourcemaps.write('./') )
 		.on( "error", handleError )
 		.pipe( gulp.dest( _PROJ_CSS ) )
-		;
-} );
-
-// Impost Plugin JS
-gulp.task( "plugin:js", function () {
-	
-	// COMMENT OUT WHAT YOU DON'T NEED
-	var _PLUGIN_SCRIPTS = [
-		_PLUGINS._dataTables.scripts.required,
-		_PLUGINS._fancybox.scripts,
-		_PLUGINS._owlCarousel.scripts,
-		_PLUGINS._scrollReveal.scripts,
-		_PLUGINS._skipLinkFocus.scripts
-	];
-	
-	var _PLUGIN_SCRIPTS_ADDONS = [
-		    _PLUGINS._dataTables.scripts.bs4,
-	    ];
-
-	var COPY_PLUGIN_SCRIPTS = gulp
-		.src( addPaths( _PLUGIN_SCRIPTS ) )
-		.pipe( gulp.dest( "./dev/js/core/plugins" ) );
-	
-	var COPY_PLUGIN_ADDON_SCRIPTS = gulp
-		.src( addPaths( _PLUGIN_SCRIPTS_ADDONS  ) )
-		.pipe( gulp.dest( "./dev/js/core" ) );
-	
-	var COPY_BS_SCRIPTS = gulp
-		.src( addPaths( _BS_JS ) )
-		.pipe( gulp.dest( "./dev/js/core/bs" ) );
-
-	return COPY_BS_SCRIPTS + COPY_PLUGIN_SCRIPTS + COPY_PLUGIN_ADDON_SCRIPTS;
-
+		.pipe( browserSync.stream() );
 } );
 
 // Compile vendor scripts
 gulp.task( "vendor:js", function () {
+
+	"use strict";
+
 	return gulp
 		.src( [ "dev/js/core/**/*.js", "dev/js/core/*.js" ] )
 		.pipe( sourcemaps.init() )
@@ -258,11 +282,15 @@ gulp.task( "vendor:js", function () {
 			suffix: '.min'
 		}))
 		.pipe( sourcemaps.write('./') )
-		.pipe( gulp.dest( _PROJ_JS ) );
+		.pipe( gulp.dest( _PROJ_JS ) )
+		.pipe( browserSync.stream() );
 } );
 
 // Compile custom Scripts
 gulp.task( "application:js", function () {
+
+	"use strict";
+
 	return gulp
 		.src( [ "dev/js/scripts/*.js" ] )
 		.pipe( sourcemaps.init() )
@@ -274,11 +302,15 @@ gulp.task( "application:js", function () {
 		}))
 		.pipe( sourcemaps.write('./') )
 		.on( "error", handleError )
-		.pipe( gulp.dest( _PROJ_JS ) );
+		.pipe( gulp.dest( _PROJ_JS ) )
+		.pipe( browserSync.stream() );
 } );
 
 // Theme Functions
 gulp.task( "wp:theme:functions", function () {
+
+	"use strict";
+
 	return gulp
 		.src( [ proj_dir + "/inc/core/basic/*.php" ] )
 		.pipe( concat( "theme-functions.php", {
@@ -290,6 +322,9 @@ gulp.task( "wp:theme:functions", function () {
 
 // Field Groups
 gulp.task( "wp:theme:field_groups", function () {
+
+	"use strict";
+
 	return gulp
 		.src( [ proj_dir + "/inc/core/acf/field-groups/*.php" ] )
 		.pipe( concat( "theme-field-groups.php", {
@@ -301,6 +336,9 @@ gulp.task( "wp:theme:field_groups", function () {
 
 // Custom Functions
 gulp.task( "wp:custom", function () {
+
+	"use strict";
+
 	return gulp
 		.src( [ proj_dir + "/inc/custom/**/*.php" ] )
 		.pipe( concat( "custom-functions.php", {
@@ -312,6 +350,9 @@ gulp.task( "wp:custom", function () {
 
 // Custom Post Type
 gulp.task( "wp:custom:posts", function () {
+
+	"use strict";
+
 	return gulp
 		.src( [ proj_dir + "/inc/cpt/**/*.php" ] )
 		.pipe( concat( "custom-post-types.php", {
@@ -323,6 +364,8 @@ gulp.task( "wp:custom:posts", function () {
 
 // Open the port and browser
 gulp.task( "project:open", function () {
+
+	"use strict";
 
 	var files = [
 		"../**/*.php",
@@ -349,6 +392,8 @@ gulp.task( "project:open", function () {
 // File Watcher
 gulp.task( "project:watcher", function () {
 
+	"use strict";
+
 	gulp
 		.watch( "dev/sass/vendor/**/*.scss", [ "vendor:css" ] );
 	gulp
@@ -363,7 +408,6 @@ gulp.task( "project:watcher", function () {
 	gulp.watch( [ proj_dir + "/inc/custom/**/*.php" ], [ "wp:custom" ] );
 	gulp.watch( [ proj_dir + "/inc/cpt/**/*.php" ], [ "wp:custom:posts" ] );
 
-	gulp.watch( [ _PROJ_JS + "/*.js", _PROJ_CSS + "/*.css" ] ).on("change", reload);
 	gulp.watch( [ _PROJ_PHP + "/*.php", ] ).on( "change", reload );
 
 } );
@@ -371,12 +415,15 @@ gulp.task( "project:watcher", function () {
 // Set when to reload the page
 gulp.task( "project:reload", [ "vendor:css", "application:css", "vendor:js", "application:js" ], function () {
 
+	"use strict";
+
 	browserSync.reload();
 
 } );
 
 // Error reporting function
 function handleError (err) {
+
 	console.log( err.toString() );
 	this.emit( "end" );
 }
