@@ -1,0 +1,52 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  Form
+======================================*/
+.nf-form-cont {
+	.nf-form-fields-required { }
+	.nf-error-msg {  }
+	.nf-error-required-error { }
+	.nf-after-field {
+		.nf-error-wrap { }
+	}
+	.nf-form-content {
+		.nf-field-container {
+				&:not( .textarea-container):not( .submit-container ) {  }
+			.field-wrap {
+				&.textarea-wrap {  }
+				.ninja-forms-req-symbol {  }
+				.nf-field-label {  }
+				.nf-field-element {
+					input[type=text],
+					input[type=email],
+					input[type=tel],
+					textarea,
+					select {
+						&:active,
+						&:focus { outline: 0; }
+						&::placeholder { }
+					}
+					textarea { }
+					input[type=button] { appearance: none; @extend .btn; @extend .btn-primary;
+						&:hover { }
+					}
+				}
+				&.list-select-wrap {
+					.nf-field-element { position: relative;
+						&:after { content: '\f078'; font: normal normal normal 14px/1 FontAwesome; }
+					}
+				}
+			}
+			&.submit-container {
+				.field-wrap {
+					.nf-field-label { display: none; }
+					.nf-field-element { text-align: center; }
+				}
+			}
+			&.label-hidden {
+				.nf-field-label { display: none!important; }
+			}
+		}
+	}
+}

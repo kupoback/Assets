@@ -1,3 +1,8 @@
 @charset "UTF-8";
 
-@import "site/**/*";
+@import "settings/settings";
+@import "settings/mixins";
+@import "site/global";
+@import "site/components/*";
+@import "site/objects/*";
+@import "site/pages/*";

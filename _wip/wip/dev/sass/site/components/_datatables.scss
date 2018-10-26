@@ -1,0 +1,8 @@
+@import "../../settings/settings";
+@import "../../settings/mixins";
+
+/*  DataTable
+======================================*/
+.dataTables_wrapper {
+	.table-responsive { border-collapse: collapse !important; }
+}
