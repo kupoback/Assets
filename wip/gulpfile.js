@@ -145,7 +145,7 @@ const _bs_files = {
 // For every plugin include a name!
 const additionalPlugins = {
 	// Data Tables
-	dataTables  : {
+	_dataTables  : {
 		name   : "datatables",
 		scripts: {
 			core: _NPM_DIR + "/datatables.net/js/jquery.dataTables.js",
@@ -156,19 +156,22 @@ const additionalPlugins = {
 		}
 	},
 	// Fancy Box
-	fancyBox    : {
+	_fancyBox    : {
 		name   : "fancybox",
 		scripts: _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.js",
 		styles : _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.css",
 	},
+	_mixitup : {
+		scripts: _NPM_DIR + "/mixitup/dist/mixitup.js"
+	},
 	// Modaal
-	modaal      : {
+	_modaal      : {
 		name   : "modaal",
 		scripts: _NPM_DIR + "/modaal/dist/js/modaal.js",
 		styles : _NPM_DIR + "/modaal/dist/css/modaal.scss",
 	},
 	// Owl-Carousel 2
-	owlCarousel : {
+	_owlCarousel : {
 		name   : "owlcarousel",
 		scripts: _NPM_DIR + "/owl-carousel-2/owl.carousel.js",
 		styles : [
@@ -179,12 +182,12 @@ const additionalPlugins = {
 		media  : _NPM_DIR + "/owl-carousel-2/assets/ajax-loader.gif",
 	},
 	//Paroller
-	paroller    : {
+	_paroller    : {
 		name   : "paroller",
 		scripts: _NPM_DIR + "/paroller.js/dist/jquery.paroller.js",
 	},
 	//Scroll Reveal
-	scrollReveal: {
+	_scrollReveal: {
 		name   : "scrollreveal",
 		scripts: _NPM_DIR + "/scrollreveal/dist/scrollreveal.es.js",
 	},
@@ -220,22 +223,23 @@ let _bs_styles = addPaths(
 
 //region Plugin Scripts - Uncomment or Add what you need
 let _pluginScripts = addPaths(
-	// additionalPlugins.dataTables.scripts.core,
-	// additionalPlugins.dataTables.scripts.bs,
-	// additionalPlugins.fancyBox.scripts,
-	// additionalPlugins.modaal.scripts,
-	// additionalPlugins.owlCarousel.scripts,
-	// additionalPlugins.paroller.scripts,
-	// additionalPlugins.scrollReveal.scripts,
+	// additionalPlugins._dataTables.scripts.core,
+	// additionalPlugins._dataTables.scripts.bs,
+	// additionalPlugins._fancyBox.scripts,
+	// additionalPlugins._mixitup.scripts,
+	// additionalPlugins._modaal.scripts,
+	// additionalPlugins._owlCarousel.scripts,
+	// additionalPlugins._paroller.scripts,
+	// additionalPlugins._scrollReveal.scripts,
 );
 //endregion
 
 //region Plugin Styles - Uncomment or add what you need
 let _pluginStyles = addPaths(
-	// additionalPlugins.dataTables.styles.bs,
-	// additionalPlugins.fancyBox.styles,
-	// additionalPlugins.modaal.styles,
-	// additionalPlugins.owlCarousel.styles,
+	// additionalPlugins._dataTables.styles.bs,
+	// additionalPlugins._fancyBox.styles,
+	// additionalPlugins._modaal.styles,
+	// additionalPlugins._owlCarousel.styles,
 );
 //endregion
 
