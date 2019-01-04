@@ -5,22 +5,11 @@
 		@media ( min-width: 768px ) {
 			position: absolute; top: 50%; left: 50%; transform: translate( -50%, -50% ); z-index: 999;
 		}
-		.col {
-			.hero-content {
-				.hero-title {
-					h1 { }
-				}
-				.hero-caption {
-					p { }
-					a { }
-				}
-			}
-		}
 	}
 }
 .hero-image { position: relative;
 	@media ( min-width: 768px ) {
-		overflow: hidden;
+		overflow: hidden; min-height: 50vh;
 		img {object-fit: cover; width: 100%; }
 	}
 	.container { position: absolute; bottom: 0; left: 0; right: 0;

@@ -1,110 +1,121 @@
-var url                    = "https://base.app/", // Your testing URL
-	proj_dir               = "../wp-content/themes/base", // Give a project path
-	theme_name             = "base", // Give a theme path if WP
-	// EXAMPLE
-	// ssl_key = '/Users/username/.valet/Certificates/domain.TLS.key',
-	ssl_key                = "/Users/nmak/.valet/Certificates/base.app.key", // Replace with path for your SSL key
-	ssl_cert               = "/Users/nmak/.valet/Certificates/base.app.crt", // Replace with path for your SSL key
-	gulp                   = require( "gulp" ),
-	sass                   = require( "gulp-sass" ),
-	autoprefixer           = require( "gulp-autoprefixer" ),
-	globbing               = require( "gulp-css-globbing" ),
-	sourcemaps             = require( "gulp-sourcemaps" ),
-	flatten                = require( "gulp-flatten" ),
-	rename                 = require( "gulp-rename" ),
-	newer                  = require( "gulp-newer" ),
-	concat                 = require( "gulp-concat" ),
-	uglify                 = require( "gulp-uglify" ),
-	browserSync            = require( "browser-sync" ).create(),
-	reload                 = browserSync.reload(),
-	_PROJ_CSS              = proj_dir + "/assets/css",
-	_PROJ_JS               = proj_dir + "/assets/js",
-	_PROJ_IMG              = proj_dir + "/assets/img",
-	_PROJ_PHP              = proj_dir + "/inc/compiled",
-	_NPM_DIR               = "./node_modules",
-	_BS_DIR                = _NPM_DIR + "/bootstrap",
-	_BS_CSS                = _BS_DIR + "/scss/",
-	addPaths               = (...paths) => paths.reduce( (p, c) => p.concat( c ), [] ),
-	_BS_CSS_MUST_IMPORT    = [
-		// Do not uncomment
-		_BS_CSS + "_functions.scss",
-		_BS_CSS + "_variables.scss",
-		_BS_CSS + "_mixins.scss",
-		_BS_CSS + "_reboot.scss",
-		_BS_CSS + "_grid.scss",
-		_BS_CSS + "_transitions.scss",
-		_BS_CSS + "_media.scss",
-		_BS_CSS + "_root.scss",
-		_BS_CSS + "_images.scss",
-		_BS_CSS + "_utilities.scss",
-		_BS_CSS + "_print.scss",
-		_BS_CSS + "_close.scss",
-		_BS_CSS + "_type.scss",
-		_BS_CSS + "_dropdown.scss",
-		_BS_CSS + "_nav.scss",
-		_BS_CSS + "_navbar.scss",
-	],
-	_BS_ADDITIONAL_IMPORT = [
+var url                   = "https://base.app/", // Your testing URL
+    proj_dir              = "../wp-content/themes/base_theme", // Give a project path
+    // EXAMPLE
+    // ssl_key = '/Users/username/.config/valet/Certificates/domain.TLS.key',
+    ssl_key               = "/Users/nmak/.config/valet/Certificates/base.app.key", // Replace with path for your SSL key
+    ssl_cert              = "/Users/nmak/.config/valet/Certificates/base.app.crt", // Replace with path for your SSL key
+    gulp                  = require( "gulp" ),
+    autoprefixer          = require( "autoprefixer" ),
+    concat                = require( "gulp-concat" ),
+    cssnano               = require( "cssnano" ),
+    exists                = require( "file-exists" ),
+    flatten               = require( "gulp-flatten" ),
+    globbing              = require( "gulp-css-globbing" ),
+    newer                 = require( "gulp-newer" ),
+    postcss               = require( "gulp-postcss" ),
+    rename                = require( "gulp-rename" ),
+    sass                  = require( "gulp-sass" ),
+    sequence              = require( "gulp-sequence" ),
+    sourcemaps            = require( "gulp-sourcemaps" ),
+    strip                 = require( "gulp-strip-comments" ),
+    uglify                = require( "gulp-uglify" ),
+    browserSync           = require( "browser-sync" ).create(),
+    reload                = browserSync.reload,
+    _PROJ_CSS             = proj_dir + "/assets/css",
+    _PROJ_JS              = proj_dir + "/assets/js",
+    _PROJ_IMG             = proj_dir + "/assets/img",
+    _PROJ_PHP             = proj_dir + "/inc/compiled",
+    _NPM_DIR              = "./node_modules",
+    _BS_DIR               = _NPM_DIR + "/bootstrap",
+    _BS_CSS               = _BS_DIR + "/scss/",
+    addPaths              = (...paths) => paths.reduce( (p, c) => p.concat( c ), [] ),
+    _BS_CSS_MUST_IMPORT   = [
+	    // Do not uncomment
+	    _BS_CSS + "_functions.scss",
+	    _BS_CSS + "_variables.scss",
+	    _BS_CSS + "_mixins.scss",
+	    _BS_CSS + "_reboot.scss",
+	    _BS_CSS + "_grid.scss",
+	    _BS_CSS + "_transitions.scss",
+	    _BS_CSS + "_media.scss",
+	    _BS_CSS + "_root.scss",
+	    _BS_CSS + "_images.scss",
+	    _BS_CSS + "_utilities.scss",
+	    _BS_CSS + "_print.scss",
+	    _BS_CSS + "_close.scss",
+	    _BS_CSS + "_type.scss",
+	    _BS_CSS + "_dropdown.scss",
+	    _BS_CSS + "_nav.scss",
+	    _BS_CSS + "_navbar.scss",
+    ],
+    _BS_ADDITIONAL_IMPORT = [
 
-		// Uncomment what you need
-		// Common files
-		// _BS_CSS + '_buttons.scss',
-		// _BS_CSS + '_button-group.scss',
-		// _BS_CSS + '_card.scss',
-		// _BS_CSS + '_tables.scss',
-		// _BS_CSS + '_list-group.scss',
-		// _BS_CSS + '_modal.scss',
-		// Dependent on each other
-		// _BS_CSS + '_forms.scss',
-		// _BS_CSS + '_custom-forms.scss',
-		// _BS_CSS + '_input-group.scss',
-		// End dependency
+	    // Uncomment what you need
+	    // Common files
+	    // _BS_CSS + "_buttons.scss",
+	    // _BS_CSS + '_button-group.scss',
+	    // _BS_CSS + '_card.scss',
+	    // _BS_CSS + '_tables.scss',
+	    // _BS_CSS + '_list-group.scss',
+	    // _BS_CSS + "_modal.scss",
+	    // Dependent on each other
+	    // _BS_CSS + '_forms.scss',
+	    // _BS_CSS + '_custom-forms.scss',
+	    // _BS_CSS + '_input-group.scss',
+	    // End dependency
 
-		// Dependent on each other
-		// _BS_CSS + '_popover.scss',
-		// _BS_CSS + '_tooltip.scss',
-		// End dependency
+	    // Dependent on each other
+	    // _BS_CSS + '_popover.scss',
+	    // _BS_CSS + '_tooltip.scss',
+	    // End dependency
 
-		//Uncommon files
-		// _BS_CSS + '_code.scss',
-		// _BS_CSS + '_alert.scss',
-		// _BS_CSS + '_badge.scss',
-		// _BS_CSS + '_breadcrumb.scss',
-		// _BS_CSS + '_carousel.scss',
-		// _BS_CSS + '_jumbotron.scss',
-		// _BS_CSS + '_pagination.scss',
-		// _BS_CSS + '_progress.scss',
-	],
-	_BS_JS                 = _BS_DIR + "/dist/js/bootstrap.bundle.min.js",
-	_PLUGINS               = {
-		_dataTables:    {
-			scripts: {
-				required: _NPM_DIR + "/datatables.net/js/jquery.dataTables.js",
-				bs4: _NPM_DIR + "/datatables.net-bs4/js/dataTables.bootstrap4.js"
-			},
-			styles:  _NPM_DIR + "/datatables.net-bs4/css/dataTables.bootstrap4.css"
-		},
-		_fancybox:      {
-			scripts: _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.js",
-			styles:  _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.css"
-		},
-		_owlCarousel:   {
-			scripts: _NPM_DIR + "/owl-carousel-2/owl.carousel.js",
-			styles:  {
-				required:   _NPM_DIR + "/owl-carousel-2/assets/owl.carousel.css",
-				additional: _NPM_DIR + "/owl-carousel-2/assets/owl.theme.default.css",
-			},
-			media:   _NPM_DIR + "/owl-carousel-2/assets/*.{jpg,png,gif}",
-		},
-		_scrollReveal:  {
-			scripts: _NPM_DIR + "/scrollreveal/dist/scrollreveal.js"
-		},
-		_skipLinkFocus: {
-			scripts: _NPM_DIR + "/skip-link-focus/skip-link-focus.js"
-		}
-	};
+	    //Uncommon files
+	    // _BS_CSS + '_code.scss',
+	    // _BS_CSS + '_alert.scss',
+	    // _BS_CSS + '_badge.scss',
+	    // _BS_CSS + '_breadcrumb.scss',
+	    // _BS_CSS + '_carousel.scss',
+	    // _BS_CSS + '_jumbotron.scss',
+	    // _BS_CSS + '_pagination.scss',
+	    // _BS_CSS + '_progress.scss',
+    ],
+    _BS_JS                = _BS_DIR + "/dist/js/bootstrap.bundle.min.js",
+    _PLUGINS              = {
+	    // Interactive table
+	    _dataTables:    {
+		    scripts: {
+			    required: _NPM_DIR + "/datatables.net/js/jquery.dataTables.js",
+			    bs4:      _NPM_DIR + "/datatables.net-bs4/js/dataTables.bootstrap4.js"
+		    },
+		    styles:  _NPM_DIR + "/datatables.net-bs4/css/dataTables.bootstrap4.css"
+	    },
+	    // Lightbox Plugingulp
+	    _fancybox:      {
+		    scripts: _NPM_DIR + "/@fancyapps/fancybox/dist/jquery.fancybox.js"
+	    },
+	    // Filter Plugin
+	    _mixitup:       {
+		    scripts: _NPM_DIR + "/mixitup/dist/mixitup.js"
+	    },
+	    // Slider
+	    _owlCarousel:   {
+		    scripts: _NPM_DIR + "/owl-carousel-2/owl.carousel.js",
+		    styles:  {
+			    required:   _NPM_DIR + "/owl-carousel-2/assets/owl.carousel.css",
+			    additional: _NPM_DIR + "/owl-carousel-2/assets/owl.theme.default.css",
+		    },
+		    media:   _NPM_DIR + "/owl-carousel-2/assets/*.{jpg,png,gif}",
+	    },
+	    // Similar to lazyload but for elements
+	    _scrollReveal:  {
+		    scripts: _NPM_DIR + "/scrollreveal/dist/scrollreveal.js"
+	    },
+	    // Accessibility for "Skip to content" links
+	    _skipLinkFocus: {
+		    scripts: _NPM_DIR + "/skip-link-focus/skip-link-focus.js"
+	    }
+    };
 
-//region Import Tasks
 //Bootstrap CSS Imports
 gulp.task( "bootstrap:css", function () {
 
@@ -131,31 +142,30 @@ gulp.task( "plugin:css", function () {
 
 	"use strict";
 
-	var owlAssets = '';
+	var owlAssets = "";
+	// COMMENT OUT WHAT YOU DON'T NEED
 	var _styles = [
-		// _PLUGINS._dataTables.styles,
-		// _PLUGINS._fancybox.styles,
-		// _PLUGINS._owlCarousel.styles.required,
-		// _PLUGINS._owlCarousel.styles.additional
+		_PLUGINS._dataTables.styles,
+		_PLUGINS._owlCarousel.styles.required,
+		_PLUGINS._owlCarousel.styles.additional
 	];
 
-	// COMMENT OUT WHAT YOU DON'T NEED
 	var _PLUGIN_STYLES = gulp
 		.src( addPaths( _styles ) )
 		// We need to convert these to .scss files
 		.pipe( rename( {
-			prefix: "_",
+			prefix:  "_",
 			suffix:  "-convert",
 			extname: ".scss"
 		} ) )
 		.pipe( gulp.dest( "./dev/sass/vendor/plugins" ) );
 
-	if ( _styles.includes(_PLUGINS._owlCarousel.styles.required ) )
+	if ( _styles.includes( _PLUGINS._owlCarousel.styles.required ) )
 		owlAssets = gulp
-			.src(addPaths(
+			.src( addPaths(
 				_PLUGINS._owlCarousel.media
-			))
-			.pipe(gulp.dest(_PROJ_IMG));
+			) )
+			.pipe( gulp.dest( _PROJ_IMG ) );
 
 	return _PLUGIN_STYLES + owlAssets;
 
@@ -166,67 +176,74 @@ gulp.task( "plugin:js", function () {
 
 	"use strict";
 
+	var COPY_PLUGIN_SCRIPTS       = "",
+	    COPY_PLUGIN_ADDON_SCRIPTS = "",
+	    COPY_BS_SCRIPTS           = "";
+
 	// COMMENT OUT WHAT YOU DON'T NEED
 	var _PLUGIN_SCRIPTS = [
-		_PLUGINS._dataTables.scripts.required,
-		_PLUGINS._fancybox.scripts,
-		_PLUGINS._owlCarousel.scripts,
-		_PLUGINS._scrollReveal.scripts,
-		_PLUGINS._skipLinkFocus.scripts
+		// DO NOT UNCOMMENT THIS!
+		_PLUGINS._skipLinkFocus.scripts, // Accessibility for "Skip to content" links
+
+		// Can uncomment what you need.
+		_PLUGINS._dataTables.scripts.required, // Interactive table
+		_PLUGINS._fancybox.scripts, // Lightbox Plugin
+		_PLUGINS._mixitup.scripts, // Filter Plugin
+		_PLUGINS._owlCarousel.scripts, // Slider
+		_PLUGINS._scrollReveal.scripts, // Similar to lazyload but for elements
+		//
 	];
 
 	var _PLUGIN_SCRIPTS_ADDONS = [
-		_PLUGINS._dataTables.scripts.bs4,
+		// _PLUGINS._dataTables.scripts.bs4,
 	];
 
-	var COPY_PLUGIN_SCRIPTS = gulp
+	COPY_PLUGIN_SCRIPTS = gulp
 		.src( addPaths( _PLUGIN_SCRIPTS ) )
 		.pipe( gulp.dest( "./dev/js/core/plugins" ) );
 
-	var COPY_PLUGIN_ADDON_SCRIPTS = gulp
-		.src( addPaths( _PLUGIN_SCRIPTS_ADDONS  ) )
-		.pipe( gulp.dest( "./dev/js/core" ) );
+	if ( _PLUGIN_SCRIPTS.includes( _PLUGINS._dataTables.scripts.required ) ) {
+		COPY_PLUGIN_ADDON_SCRIPTS = gulp
+			.src( addPaths( _PLUGIN_SCRIPTS_ADDONS ) )
+			.pipe( gulp.dest( "./dev/js/core" ) );
+	}
 
-	var COPY_BS_SCRIPTS = gulp
+	COPY_BS_SCRIPTS = gulp
 		.src( addPaths( _BS_JS ) )
 		.pipe( gulp.dest( "./dev/js/core/bs" ) );
 
 	return COPY_BS_SCRIPTS + COPY_PLUGIN_SCRIPTS + COPY_PLUGIN_ADDON_SCRIPTS;
 
 } );
-//endregion
 
 //Vendor CSS
 gulp.task( "vendor:css", function () {
 
 	"use strict";
 
+	var plugins = [
+		autoprefixer( {
+			browsers: [ "cover 99.5%" ]
+		} ),
+		cssnano()
+	];
+
 	return gulp
-		.src( ["./dev/sass/application-vendor.scss"] )
+		.src( [ "./dev/sass/application-vendor.scss" ] )
 		.pipe( flatten() )
 		.pipe( newer( "./dev/sass/vendor/**/*" ) )
-		.pipe( sourcemaps.init({
-			loadMaps: true
-		}) )
-		.pipe(sourcemaps.identityMap())
+		.pipe( sourcemaps.init() )
 		.pipe( globbing( {
 			extensions: ".scss"
 		} ) )
-		.pipe( sass( {
-			outputStyle: "compressed"
-		} ).on( "error", sass.logError ) )
-		.pipe( autoprefixer( {
-			flexbox:  true,
-			cascade:  false,
-			browsers: [ "last 2 versions" ],
-			add:      true,
-			remove:   false,
-		} ) )
+		.pipe( sass().on( "error", sass.logError ) )
+		.pipe( postcss( plugins ) )
 		.pipe( rename( {
-			suffix:  ".min",
+			suffix: ".min",
 		} ) )
-		.pipe( sourcemaps.write( ) )
 		.on( "error", handleError )
+		// .pipe( sourcemaps.write( "./" ) )
+		.pipe( sourcemaps.write() )
 		.pipe( gulp.dest( _PROJ_CSS ) )
 		.pipe( browserSync.stream() );
 } );
@@ -236,34 +253,32 @@ gulp.task( "application:css", function () {
 
 	"use strict";
 
+	var plugins = [
+		autoprefixer( {
+			browsers: [ "cover 99.5%" ]
+		} ),
+		cssnano()
+	];
+
 	return gulp
-		.src( ["dev/sass/application.scss"] )
+		.src( [ "dev/sass/application.scss" ] )
 		.pipe( flatten() )
 		.pipe( newer( "dev/sass/**/*" ) )
-		.pipe( sourcemaps.init({
-			loadMaps: true
-		}) )
-		.pipe(sourcemaps.identityMap())
+		.pipe( sourcemaps.init() )
 		.pipe( globbing( {
 			extensions: ".scss"
 		} ) )
-		.pipe( sass( {
-			outputStyle: "compressed"
-		} ).on( "error", sass.logError ) )
-		.pipe( autoprefixer( {
-			flexbox:  true,
-			cascade:  false,
-			browsers: [ "last 2 versions" ],
-			add:      true,
-			remove:   false,
-		} ) )
+		.pipe( sass().on( "error", sass.logError ) )
+		.pipe( postcss( plugins ) )
 		.pipe( rename( {
-			suffix:  ".min",
+			suffix: ".min",
 		} ) )
-		.pipe( sourcemaps.write('./') )
-		.on( "error", handleError )
+		// .pipe( sourcemaps.write( "./" ) )
+		.pipe( sourcemaps.write() )
 		.pipe( gulp.dest( _PROJ_CSS ) )
+		.on( "error", handleError )
 		.pipe( browserSync.stream() );
+
 } );
 
 // Compile vendor scripts
@@ -274,15 +289,16 @@ gulp.task( "vendor:js", function () {
 	return gulp
 		.src( [ "dev/js/core/**/*.js", "dev/js/core/*.js" ] )
 		.pipe( sourcemaps.init() )
-		.pipe( sourcemaps.identityMap() )
 		.pipe( concat( "application-vendor.js" ) )
 		.pipe( uglify() )
-		.on( "error", handleError )
-		.pipe(rename({
-			suffix: '.min'
-		}))
-		.pipe( sourcemaps.write('./') )
+		.pipe( rename( {
+			suffix: ".min"
+		} ) )
+		.pipe( strip() )
+		// .pipe( sourcemaps.write('./') )
+		.pipe( sourcemaps.write() )
 		.pipe( gulp.dest( _PROJ_JS ) )
+		.on( "error", handleError )
 		.pipe( browserSync.stream() );
 } );
 
@@ -294,15 +310,16 @@ gulp.task( "application:js", function () {
 	return gulp
 		.src( [ "dev/js/scripts/*.js" ] )
 		.pipe( sourcemaps.init() )
-		.pipe( sourcemaps.identityMap() )
 		.pipe( concat( "application.js" ) )
 		.pipe( uglify() )
-		.pipe(rename({
-			suffix: '.min'
-		}))
-		.pipe( sourcemaps.write('./') )
-		.on( "error", handleError )
+		.pipe( rename( {
+			suffix: ".min"
+		} ) )
+		.pipe( strip() )
+		// .pipe( sourcemaps.write('./') )
+		.pipe( sourcemaps.write() )
 		.pipe( gulp.dest( _PROJ_JS ) )
+		.on( "error", handleError )
 		.pipe( browserSync.stream() );
 } );
 
@@ -362,6 +379,39 @@ gulp.task( "wp:custom:posts", function () {
 		.pipe( gulp.dest( _PROJ_PHP + "/custom/" ) );
 } );
 
+// File Watcher
+gulp.task( "project:watcher", function () {
+
+	"use strict";
+
+	// Compile our Vendor SCSS files
+	gulp
+		.watch( [ "dev/sass/vendor/**/*.scss" ], [ "vendor:css" ] );
+
+	// Compile our Vendor JS files
+	gulp
+		.watch( [ "dev/js/scripts/core/bs/*.js", "dev/js/scripts/core/plugins/**/*.js" ], [ "vendor:js" ] );
+
+	// Watch Custom SCSS files
+	gulp
+		.watch( [ "dev/sass/**/**/*.scss", "!dev/sass/vendor/**/*.scss" ], [ "application:css" ] );
+
+	// Watch Custom JS files
+	gulp
+		.watch( [ "dev/js/scripts/**/*.js", "!dev/js/scripts/core/bs/*.js", "!dev/js/scripts/core/plugins/**/*.js" ], [ "application:js" ] );
+
+	// PHP Functions
+	gulp.watch( proj_dir + "/inc/core/**/*.php", [ "wp:theme:functions", "wp:theme:field_groups" ] );
+	gulp.watch( [ proj_dir + "/inc/custom/**/*.php" ], [ "wp:custom" ] );
+	gulp.watch( [ proj_dir + "/inc/cpt/**/*.php" ], [ "wp:custom:posts" ] );
+
+	// Reload page when php, css, or js files change.
+	gulp.watch( [ _PROJ_PHP + "/*.php", ] ).on( "change", reload );
+	gulp.watch( [ _PROJ_CSS + "/*.min.css" ] ).on( "change", reload );
+	gulp.watch( [ _PROJ_JS + "/*.min.js" ] ).on( "change", reload );
+
+} );
+
 // Open the port and browser
 gulp.task( "project:open", function () {
 
@@ -384,63 +434,47 @@ gulp.task( "project:open", function () {
 	browserSync.init( files, {
 		proxy:         url,
 		injectChanges: true,
-		https:         https_params
+		https:         https_params,
+		notify:        false,
 	} );
-
-} );
-
-// File Watcher
-gulp.task( "project:watcher", function () {
-
-	"use strict";
-
-	gulp
-		.watch( "dev/sass/vendor/**/*.scss", [ "vendor:css" ] );
-	gulp
-		.watch( [ "dev/sass/**/**/*.scss", "!dev/sass/vendor/**/*.scss" ], [ "application:css" ] );
-	gulp
-		.watch( "dev/js/core/**/*.js", [ "vendor:js" ] );
-	gulp
-		.watch( [ "dev/js/**/*.js", "!dev/js/core/*.js" ], [ "application:js" ] );
-
-	// PHP Functions
-	gulp.watch( proj_dir + "/inc/core/**/*.php", [ "wp:theme:functions", "wp:theme:field_groups" ] );
-	gulp.watch( [ proj_dir + "/inc/custom/**/*.php" ], [ "wp:custom" ] );
-	gulp.watch( [ proj_dir + "/inc/cpt/**/*.php" ], [ "wp:custom:posts" ] );
-
-	gulp.watch( [ _PROJ_PHP + "/*.php", ] ).on( "change", reload );
-
-} );
-
-// Set when to reload the page
-gulp.task( "project:reload", [ "vendor:css", "application:css", "vendor:js", "application:js" ], function () {
-
-	"use strict";
-
-	browserSync.reload();
 
 } );
 
 // Error reporting function
 function handleError (err) {
 
+	"use strict";
+
 	console.log( err.toString() );
 	this.emit( "end" );
 }
 
-gulp.task( "default", [
-	"bootstrap:css",
-	"plugin:css",
-	"plugin:js",
-	"vendor:css",
-	"application:css",
-	"vendor:js",
-	"application:js",
-	"wp:theme:functions",
-	"wp:theme:field_groups",
-	"wp:custom",
-	"wp:custom:posts",
-	"project:open",
-	"project:reload",
-	"project:watcher"
-] );
+gulp.task(
+	"default",
+	sequence(
+		// Copy our needed files
+		[
+			"bootstrap:css",
+			"plugin:css",
+			"plugin:js"
+		],
+		// Start compiling our files
+		[
+			"wp:theme:functions",
+			"wp:theme:field_groups",
+			"wp:custom",
+			"wp:custom:posts",
+		],
+		// Start compiling our CSS and JS files.
+		[
+			"vendor:css",
+			"vendor:js",
+			"application:js",
+			"application:css",
+		],
+		// Serve our site
+		"project:open",
+		// Watch for changes in our files.
+		"project:watcher",
+	)
+);

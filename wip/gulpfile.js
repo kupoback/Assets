@@ -20,8 +20,8 @@
 //region Theme URL Settings
 const _THEME_NAME = "base"; // Theme Name - Generally the project name
 const _THEME_URL  = "https://grunt-rework.app"; // The URL to work locally. Make sure to secure the URL
-const _SSL_KEY    = "/Users/nmak/.valet/Certificates/grunt-rework.app.key"; // Update username and URL
-const _SSL_CERT   = "/Users/nmak/.valet/Certificates/grunt-rework.app.crt"; // Update username and URL
+const _SSL_KEY    = "/Users/nmak/.config/valet/Certificates/grunt-rework.app.key"; // Update username and URL
+const _SSL_CERT   = "/Users/nmak/.config/valet/Certificates/grunt-rework.app.crt"; // Update username and URL
 //endregion
 
 //region Theme Variables - DO NOT TOUCH

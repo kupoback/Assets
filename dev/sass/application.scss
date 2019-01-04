@@ -1,7 +1,9 @@
 @charset "UTF-8";
 
-@import "settings/*";
-@import "required/*";
-@import "objects/*";
-@import "components/*";
-@import "pages/*";
+@import "./settings/*";
+@import "./required/global";
+@import "./required/navigation";
+@import "./required/crossbrowser";
+@import "./objects/*";
+@import "./components/*";
+@import "./pages/*";

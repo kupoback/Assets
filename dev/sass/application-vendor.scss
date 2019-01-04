@@ -2,6 +2,8 @@
 
 @import "./vendor/bs/functions";
 @import "./vendor/bs/variables";
+// Bootstrap Overrides
+@import "./vendor/bootstrap.additions";
 @import "./vendor/bs/mixins";
 @import "./vendor/bs/root";
 @import "./vendor/bs/reboot";
@@ -16,7 +18,6 @@
 @import "./vendor/bs/close";
 @import "./vendor/bs/utilities";
 @import "./vendor/bs/print";
-@import "./vendor/bootstrap.additions";
 
 
 // Comment out the Boostrap version you don't need. Only run one.
@@ -27,7 +28,7 @@
 //@import "./vendor/bs/card";
 //@import "./vendor/bs/tables";
 //@import "./vendor/bs/list-group";
-//@import "./vendor/bs/list-modal";
+//@import "./vendor/bs/modal";
 // Dependent on each other
 //@import "./vendor/bs/forms";
 //@import "./vendor/bs/custom-forms";
@@ -40,22 +41,22 @@
 // End dependency
 
 //Uncommon files
-//@import "./vendor/bs/code";,
-//@import "./vendor/bs/alert";,
-//@import "./vendor/bs/badge";,
-//@import "./vendor/bs/breadcrumb";,
-//@import "./vendor/bs/carousel";,
-//@import "./vendor/bs/jumbotron";,
-//@import "./vendor/bs/pagination";,
-//@import "./vendor/bs/progress";,
+//@import "./vendor/bs/code";
+//@import "./vendor/bs/alert";
+//@import "./vendor/bs/badge";
+//@import "./vendor/bs/breadcrumb";
+//@import "./vendor/bs/carousel";
+//@import "./vendor/bs/jumbotron";
+//@import "./vendor/bs/pagination";
+//@import "./vendor/bs/progress";
 
 // Plugins
-// @import "./vendor/owl.carousel";
-// @import "./vendor/owl.theme.default";
-// @import "./vendor/dataTablesBS4";
-// @import "./vendor/jquery.fancybox";
+// @import "./vendor/plugins/owl.carousel-convert";
+// @import "./vendor/plugins/owl.theme.default-convert";
+// @import "./vendor/plugins/dataTables.bootstrap4-convert";
+@import "./vendor/plugins/jquery.fancybox-convert";
 
 @import "./vendor/wp";
 @import "./vendor/animate";
 
-@import "./vendor/plugins/*";
+@import "./required/all";
