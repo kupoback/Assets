@@ -13,7 +13,7 @@
 	"author": "Nick Makris",
 	"license": "MIT",
 	"dependencies": {
-		"jquery": "1.9.1 - 3",
+		"jquery": "~>3.4.0",
 		"popper.js": "^1.14.3",
 		"bootstrap": "^4.1.3",
 		"run-sequence": "^2.2.1"
